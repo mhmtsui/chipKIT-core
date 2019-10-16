@@ -144,6 +144,7 @@ HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, i
 	spl  = (uint8_t)splT;
     isr  = isrHandler;
     rxIntr = NULL;
+    txIntr = NULL;
 
 #if defined(__PIC32_PPS__)
 	pinTx = (uint8_t)pinT;
@@ -254,7 +255,7 @@ void HardwareSerial::begin(unsigned long baudRate)
 	ifs->clr = bit_rx + bit_tx + bit_err;	//clear all interrupt flags
 
 	iec->clr = bit_rx + bit_tx + bit_err;	//disable all interrupts
-	iec->set = bit_rx;						//enable rx interrupts
+	iec->set = bit_rx;      				//enable rx interrupts
 
 	/* Initialize the UART itself.
 	**	http://www.chipkit.org/forum/viewtopic.php?f=7&t=213&p=948#p948
@@ -271,7 +272,7 @@ void HardwareSerial::begin(unsigned long baudRate)
         uart->uxBrg.reg    = ((__PIC32_pbClk / 4 / baudRate) - 1);       // calculate actual BAUD generate value.
         uart->uxMode.reg = (1 << _UARTMODE_ON) | (1 << _UARTMODE_BRGH);  // enable UART module
     }
-    uart->uxSta.reg  = (1 << _UARTSTA_UTXEN) + (1 << _UARTSTA_URXEN);    // enable transmitter and receiver
+    uart->uxSta.reg  = (1 << _UARTSTA_UTXEN) + (1 << _UARTSTA_URXEN) + (1 << 14);    // enable transmitter and receiver
 }
 
 /* ------------------------------------------------------------ */
@@ -375,7 +376,7 @@ void HardwareSerial::begin(unsigned long baudRate, uint8_t address) {
         uart->uxMode.set =  (1 << _UARTMODE_BRGH) + (0b11 << _UARTMODE_PDSEL); 
     }
     // set address of RS485 slave, enable transmitter and receiver and auto address detection
-    uart->uxSta.set = (1 << _UARTSTA_ADM_EN) + (address << _UARTSTA_ADDR) + (1 << _UARTSTA_UTXEN) + (1 << _UARTSTA_URXEN);  
+    uart->uxSta.set = (1 << _UARTSTA_ADM_EN) + (address << _UARTSTA_ADDR) + (1 << 14) + (1 << _UARTSTA_UTXEN) + (1 << _UARTSTA_URXEN);  
     enableAddressDetection(); // enable auto address detection
     uart->uxMode.set = 1 << _UARTMODE_ON; // enable UART module
 }
@@ -574,13 +575,39 @@ size_t HardwareSerial::write(uint8_t theChar)
 {
 
 	while ((uart->uxSta.reg & (1 << _UARTSTA_UTXBF)) != 0)	//check the UTXBF bit
-  {
+    {
 		//* wait for the transmitter buffer to have room
 	}
 
 	uart->uxTx.reg = theChar;
+    if (txIntr != NULL){
+        iec->set = bit_tx + bit_rx; //enable tx interrupt
+    }
     return 1;
 }
+
+size_t HardwareSerial::write(const uint8_t *buffer, size_t size) {
+    size_t n = 0;
+    while (size--) {
+        while ((uart->uxSta.reg & (1 << _UARTSTA_UTXBF)) != 0)	//check the UTXBF bit
+        {
+                //* wait for the transmitter buffer to have room
+        }
+        uart->uxTx.reg = (*buffer++);
+        n += 1;
+    }
+    if (txIntr != NULL){
+        iec->set = bit_tx + bit_rx; //enable tx interrupt
+    }
+    return n;
+}
+
+size_t HardwareSerial::write(const char *str) {
+    if (str == NULL) return 0;
+    return write((const uint8_t *)str, strlen(str));
+}
+
+
 
 // Hardware serial has a buffer of length 1
 int HardwareSerial::availableForWrite() {
@@ -658,11 +685,23 @@ void HardwareSerial::doSerialInt(void)
 	*/
 	if ((ifs->reg & bit_tx) != 0)
 	{
+        if (uart->uxSta.reg & (1 << _UARTSTA_TMRT)){
+            if (txIntr != NULL){
+                txIntr();
+            }
+            // disable the tx interrupt
+            iec->clr = bit_tx;
+            iec->set = bit_rx;
+        }
 		/* Clear the interrupt flag.
 		*/
 		ifs->clr = bit_tx;
 	}
 
+}
+
+void HardwareSerial::attachtxInterrupt(void (*callback)(void)) {
+    txIntr = callback;
 }
 
 /* Attach the interrupt by storing a function pointer in the rxIntr variable */
@@ -673,6 +712,7 @@ void HardwareSerial::attachInterrupt(void (*callback)(int)) {
 /* Detatching the interrupt is as simple as setting the rxIntr to null. */
 void HardwareSerial::detachInterrupt() {
     rxIntr = NULL;
+    txIntr = NULL;
 }
 
 /* Sets the bit in the UART status register that enables address detection */

@@ -320,7 +320,7 @@ chipkit_uc32.compiler.cpp.extra_flags=-G1024
 
 chipkit_uc32.upload.protocol=stk500v2
 chipkit_uc32.upload.maximum_size=520192
-chipkit_uc32.upload.maximum_data_size=16384
+chipkit_uc32.upload.maximum_data_size=32768
 chipkit_uc32.upload.speed=115200
 chipkit_uc32.upload.tool=pic32prog
 
@@ -982,6 +982,33 @@ RGB_Station.build.variant=RGB_Station
 RGB_Station.menu.Frequency.48=48MHz
 RGB_Station.menu.Frequency.build.f_cpu=48000000L
 
+# HE V2
+
+hestia_V2.name=Hestia V2
+hestia_V2.group=chipKIT
+
+# new items
+hestia_V2.platform=pic32
+hestia_V2.build.board=_BOARD_V2_
+hestia_V2.ldscript=MZ-application-32MZ2048ECX.ld
+# end of new items
+
+hestia_V2.upload.protocol=stk500v2
+hestia_V2.upload.maximum_size=2080768
+hestia_V2.upload.maximum_data_size=524288
+hestia_V2.upload.speed=115200
+hestia_V2.upload.tool=pic32prog
+
+hestia_V2.build.mcu=32MZ2048EFG100
+hestia_V2.build.f_cpu=200000000UL
+hestia_V2.build.core=pic32
+hestia_V2.ldcommon=chipKIT-application-COMMON-MZ.ld
+hestia_V2.build.variant=V2
+hestia_V2.build.ldscript.path={build.variant.path}
+
+hestia_V2.usb.enabled=true
+hestia_V2.usb.default=z_custom
+
 
 ############# Auto generated menu entries below here. ###############
 ############### DO NOT ADD ANYTHING AFTER THIS LINE #################
@@ -1323,3 +1350,14 @@ lenny.menu.USB.z_custom.build.extra_flags=
 
 
 
+hestia_V2.menu.USB.z_custom=Custom / Disabled
+
+hestia_V2.menu.USB.z_custom.build.extra_flags=
+
+hestia_V2.menu.USB.a_cdcacm=Serial
+
+hestia_V2.menu.USB.a_cdcacm.build.extra_flags=-D__USB_ENABLED__ -D__USB_CDCACM__ -D__SERIAL_IS_USB__
+
+hestia_V2.menu.USB.b_cdcacm_km=Serial, Keyboard & Mouse
+
+hestia_V2.menu.USB.b_cdcacm_km.build.extra_flags=-D__USB_ENABLED__ -D__USB_CDCACM_KM__ -D__SERIAL_IS_USB__

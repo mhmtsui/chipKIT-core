@@ -106,6 +106,7 @@ class HardwareSerial : public Stream
 		ring_buffer		rx_buffer;	//queue used for UART rx data
 
         void            (*rxIntr)(int); // Interrupt callback routine
+        void            (*txIntr)(void); //Interrupt callback routine
 
 	public:
 #if defined(__PIC32_PPS__)
@@ -115,7 +116,7 @@ class HardwareSerial : public Stream
 #endif
 
 		void			doSerialInt(void);
-
+        void            attachtxInterrupt(void (*callback)(void));
         void            attachInterrupt(void (*callback)(int));
         void            detachInterrupt();
         
@@ -132,7 +133,13 @@ class HardwareSerial : public Stream
 		virtual void	flush(void);
 		virtual void	purge(void);
 		virtual	size_t	write(uint8_t);
-		using	Print::write; // pull in write(str) and write(buf, size) from Print
+                virtual size_t  write(const char *str);
+                virtual size_t  write(const uint8_t *buffer, size_t size);
+                size_t write(const char *buffer, size_t size) {
+                        return write((const uint8_t *)buffer, size);
+                }
+
+		//using	Print::write; // pull in write(str) and write(buf, size) from Print
         operator        int();
 
 };
