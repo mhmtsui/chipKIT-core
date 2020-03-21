@@ -10,12 +10,12 @@
         {
           "name": "chipKIT",
           "architecture": "pic32",
-          "version": "2.1.0",
+          "version": "2.1.0-beta",
           "category": "pic32",
-          "url": "https://github.com/chipKIT32/chipKIT-core/releases/download/v2.1.0/chipkit-core-16778056.master-v2.1.0.zip",
+          "url": "https://github.com/mhmtsui/chipKIT-core/releases/download/v2.1.0/2.1.0.zip",
           "archiveFileName": "chipkit-core-16778056.master-v2.1.0.zip",
-          "checksum": "SHA-256:00d3313baa0185da83d42f11564081bd608651162dbd3fae69d0c00c42b407d5",
-          "size": "7909052",
+          "checksum": "SHA-256:1746AC0BE60B9F9AD4D7AD2C8C3AA78F5A9A10DA7229EFF9E98662C9409EC52D",
+          "size": "8520312",
           "help": {
             "online": "http://chipkit.net/started/learn-basics/"
           },
@@ -61,7 +61,8 @@
             {"name": "Clicker2"},
             {"name": "FlipNClick_MZ"},
             {"name": "RGB_Station"},
-            {"name": "DSMini"}
+            {"name": "DSMini"},
+            {"name": "hestia_V2"}
           ],
           "toolsDependencies": [
             {
