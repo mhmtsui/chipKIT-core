@@ -40,9 +40,9 @@
 #include <inttypes.h>
 
 //define timer priority
-#define TIMER4 0 // timer4 is the first timer used
+#define TIMER4 2 // timer4 is the last timer used
 #define TIMER5 1
-#define TIMER3 2
+#define TIMER3 0
 
 
 void initISR(int timer);
