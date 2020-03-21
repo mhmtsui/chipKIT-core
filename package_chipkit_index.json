@@ -12,7 +12,7 @@
           "architecture": "pic32",
           "version": "2.1.0-beta",
           "category": "pic32",
-          "url": "https://github.com/mhmtsui/chipKIT-core/releases/download/v2.1.0/2.1.0.zip",
+          "url": "https://github.com/mhmtsui/chipKIT-core/releases/download/v2.1.0-beta/2.1.0.zip",
           "archiveFileName": "chipkit-core-16778056.master-v2.1.0.zip",
           "checksum": "SHA-256:1746AC0BE60B9F9AD4D7AD2C8C3AA78F5A9A10DA7229EFF9E98662C9409EC52D",
           "size": "8520312",
