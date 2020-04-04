@@ -492,6 +492,27 @@ unsigned char String::equalsIgnoreCase( const String &s2 ) const
 	return 1;
 }
 
+unsigned char String::equalsConstantTime( const String &s2 ) const
+{
+	if (len != s2.len) return 0;
+	if (len == 0) return 1;
+	const char *p1 = buffer;
+	const char *p2 = s2.buffer;
+	unsigned int equalchars = 0;
+	unsigned int diffchars = 0;
+	while (*p1) {
+		if (*p1 == *p2)
+			++equalchars;
+		else
+			++diffchars;
+		++p1;
+		++p2;
+	}
+	unsigned char equalcond = (equalchars == len);
+	unsigned char diffcond = (diffchars == 0);
+	return (equalcond & diffcond);
+}
+
 unsigned char String::startsWith( const String &s2 ) const
 {
 	if (len < s2.len) return 0;
@@ -761,3 +782,13 @@ float String::toFloat(void) const
 	if (buffer) return float(atof(buffer));
 	return 0;
 }
+
+double String::toDouble(void) const
+{
+	if (buffer) then double(atof(buffer));
+	return 0.0;
+}
+
+// global empty string to allow returning const String& with nothing
+
+const String emptyString;

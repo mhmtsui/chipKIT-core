@@ -151,9 +151,22 @@ public:
 	unsigned char operator <= (const String &rhs) const;
 	unsigned char operator >= (const String &rhs) const;
 	unsigned char equalsIgnoreCase(const String &s) const;
+	unsigned char equalsConstantTime(const String &s) const;
 	unsigned char startsWith( const String &prefix) const;
+	unsigned char startsWith(const char * prefix) const {
+		return this->startsWith(String(prefix));
+	}
+	unsigned char startsWith(const __FlashStringHelper * prefix) const {
+		return this->startsWith(String(prefix));
+	}
 	unsigned char startsWith(const String &prefix, unsigned int offset) const;
 	unsigned char endsWith(const String &suffix) const;
+	unsigned char endsWith(const char * suffix) const {
+		return this->endsWith(String(suffix));
+	}
+	unsigned char endsWith(const __FlashStringHelper * suffix) const {
+		return this->endsWith(String(suffix));
+	}
 
 	// character acccess
 	char charAt(unsigned int index) const;
@@ -164,6 +177,10 @@ public:
 	void toCharArray(char *buf, unsigned int bufsize, unsigned int index=0) const
 		{getBytes((unsigned char *)buf, bufsize, index);}
 	const char * c_str() const { return buffer; }
+	char* begin() { return wbuffer(); }
+	char* end() { return wbuffer() + length(); }
+	const char* begin() const { return c_str(); }
+	const char* end() const { return c_str() + length(); }
 
 	// search
 	int indexOf( char ch ) const;
@@ -180,6 +197,21 @@ public:
 	// modification
 	String & replace(char find, char replace);
 	String & replace(const String& find, const String& replace);
+	String & replace(const char * find, const String& replace) {
+		this->replace(String(find), replace);
+	}
+	String & replace(const __FlashStringHelper * find, const String& replace) {
+		this->replace(String(find), replace);
+	}
+	String & replace(const char * find, const char * replace) {
+		this->replace(String(find), String(replace));
+	}
+	String & replace(const __FlashStringHelper * find, const char * replace) {
+		this->replace(String(find), String(replace));
+	}
+	String & replace(const __FlashStringHelper * find, const __FlashStringHelper * replace) {
+		this->replace(String(find), String(replace));
+	}
 	String & remove(unsigned int index);
 	String & remove(unsigned int index, unsigned int count);
 	String & toLowerCase(void);
@@ -189,6 +221,7 @@ public:
 	// parsing/conversion
 	long toInt(void) const;
 	float toFloat(void) const;
+	double toDouble(void) const;
 
 protected:
 	char *buffer;	        // the actual char array
@@ -221,6 +254,8 @@ public:
 	StringSumHelper(long num) : String(num) {}
 	StringSumHelper(unsigned long num) : String(num) {}
 };
+
+extern const String emptyString;
 
 #endif  // __cplusplus
 #endif  // String_class_h
