@@ -785,7 +785,7 @@ float String::toFloat(void) const
 
 double String::toDouble(void) const
 {
-	if (buffer) then double(atof(buffer));
+	if (buffer) return double(atof(buffer));
 	return 0.0;
 }
 
