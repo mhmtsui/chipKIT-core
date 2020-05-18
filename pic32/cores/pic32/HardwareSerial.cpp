@@ -85,7 +85,7 @@
 #endif
 
 #include "pins_arduino.h"
-
+#include "plib_dmac.h"
 #include "HardwareSerial.h"
 
 extern "C"
@@ -381,6 +381,92 @@ void HardwareSerial::begin(unsigned long baudRate, uint8_t address) {
     uart->uxMode.set = 1 << _UARTMODE_ON; // enable UART module
 }
 
+void HardwareSerial::beginasync(unsigned long baudRate, int dmarxchn, int dmatxchn){
+    /*handling pins */
+#if defined(__PIC32_PPS__)
+
+    // set the pins to digital, just in case they 
+    // are analog pins. The serial controller will not
+    // set these to digital.
+    pinMode(pinTx, INPUT); // let serial controller set as output, keep tri-stated for now.
+    pinMode(pinRx, INPUT);
+
+	/* Map the UART TX to the appropriate pin.
+	*/
+    mapPps(pinTx, ppsTx);
+
+	/* Map the UART RX to the appropriate pin.
+	*/
+    mapPps(pinRx, ppsRx);
+
+// the only UART on a non-PPS MX that conflicts with an analog
+// pin is UART5 on MX 5,6,& 7 64 pin parts only.
+#elif __PIC32_PINS__ == 64 && (defined(__PIC32MX5XX__) || defined(__PIC32MX6XX__)  || defined(__PIC32MX7XX__))
+
+    // see if this is UART5
+    if(uart == ((p32_uart *) _UART5_BASE_ADDRESS))
+    {
+        // RB8 is AN8 & U5RX
+        // RB14 is AN14 & U5TX
+        // set as digital pins
+        AD1PCFGbits.PCFG8 = 1;
+        AD1PCFGbits.PCFG14 = 1;
+    }
+#endif    
+    setIntVector(vec, isr);
+
+	/* Set the interrupt privilege level and sub-privilege level
+	*/
+	setIntPriority(vec, ipl, spl);
+
+        // MZ has 2 more vectors to worry about
+#if defined(__PIC32MZXX__)
+
+        // the MZ part works off of offset tables
+        // we must fill in the tx and rx VECs to point
+        // to the ERR VEC so all 3 VECs use the same ISR
+        setIntVector(vec+1, isr);
+        setIntVector(vec+2, isr);
+
+        // and set the priorities for the other 2 vectors.
+        setIntPriority(vec+1, ipl, spl);
+        setIntPriority(vec+2, ipl, spl);
+#endif
+    _dmarxchn = dmarxchn;
+    if (_dmarxchn != -1){
+        DMAC_Initialize(_dmarxchn);
+        DMAC_ChannelCallbackRegister(_dmarxchn, ReceiveCompleteCallback,0);
+    }
+    _dmatxchn = dmatxchn;
+    if (_dmatxchn != -1){
+        DMAC_Initialize(_dmatxchn);
+        DMAC_ChannelCallbackRegister(_dmatxchn, TransmitCompleteCallback,0);
+    }
+	/* Clear the interrupt flags, and set the interrupt enables for the
+	** interrupts used by this UART.
+	*/
+	ifs->clr = bit_rx + bit_tx + bit_err;	//clear all interrupt flags
+	iec->clr = bit_rx + bit_tx + bit_err;	//disable all interrupts
+    if (_dmarxchn == -1)
+        iec->set = bit_rx;
+	/* Initialize the UART itself.
+	**	http://www.chipkit.org/forum/viewtopic.php?f=7&t=213&p=948#p948
+    ** Use high baud rate divisor for bauds over LOW_HIGH_BAUD_SPLIT
+    */
+	uart->uxSta.reg = 0;
+    if (baudRate < LOW_HIGH_BAUD_SPLIT)
+    {
+        uart->uxBrg.reg    = ((__PIC32_pbClk / 16 / baudRate) - 1);      // calculate actual BAUD generate value.
+        uart->uxMode.reg = (1 << _UARTMODE_ON);                          // enable UART module
+    }
+    else
+    {
+        uart->uxBrg.reg    = ((__PIC32_pbClk / 4 / baudRate) - 1);       // calculate actual BAUD generate value.
+        uart->uxMode.reg = (1 << _UARTMODE_ON) | (1 << _UARTMODE_BRGH);  // enable UART module
+    }
+    uart->uxSta.reg  = (1 << _UARTSTA_UTXEN) + (1 << _UARTSTA_URXEN) + (1 << 14);    // enable transmitter and receiver    
+}
+
 /* ------------------------------------------------------------ */
 /***	HardwareSerial::end
 **
@@ -607,7 +693,13 @@ size_t HardwareSerial::write(const char *str) {
     return write((const uint8_t *)str, strlen(str));
 }
 
+void HardwareSerial::write_async(uint8_t * buffer, size_t size){
+    DMAC_ChannelTransfer(_dmatxchn, (const void *)buffer, size, (const void *)&(uart->uxTx.reg), 1, 1);
+}
 
+void HardwareSerial::read_async(uint8_t * buffer, size_t size){
+    DMAC_ChannelTransfer(_dmarxchn,(const void *)&(uart->uxRx.reg), 1, (const void *)buffer, size, 1);
+}
 
 // Hardware serial has a buffer of length 1
 int HardwareSerial::availableForWrite() {
@@ -622,6 +714,18 @@ int HardwareSerial::availableForWrite() {
 // Hardware serial is always connected regardless.
 HardwareSerial::operator int() {
     return 1;
+}
+
+void HardwareSerial::TransmitCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle){
+    if (asyncrxIntr != NULL){
+        asyncrxIntr();
+    }
+}
+
+void HardwareSerial::ReceiveCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle){
+    if (asynctxIntr != NULL){
+        asyncrxIntr();
+    }
 }
 
 /* ------------------------------------------------------------ */
@@ -698,6 +802,14 @@ void HardwareSerial::doSerialInt(void)
 		ifs->clr = bit_tx;
 	}
 
+}
+
+void HardwareSerial::attachasyncrxInterrupt(void (*callback)(void)) {
+    asyncrxIntr = callback;
+}
+
+void HardwareSerial::attachasynctxInterrupt(void (*callback)(void)) {
+    asynctxIntr = callback;
 }
 
 void HardwareSerial::attachtxInterrupt(void (*callback)(void)) {

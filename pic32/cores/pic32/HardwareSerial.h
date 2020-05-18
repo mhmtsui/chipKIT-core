@@ -58,6 +58,8 @@
     #include "USB.h"
 #endif
 
+#include "plib_dmac.h"
+
 
 //* ------------------------------------------------------------
 //* 		General Declarations
@@ -104,20 +106,26 @@ class HardwareSerial : public Stream
 		uint32_t		bit_rx;		//rx interrupt flag bit
 		uint32_t		bit_tx;		//tx interrupt flag bit
 		ring_buffer		rx_buffer;	//queue used for UART rx data
-
+                uint8_t    _dmatxchn;
+                uint8_t    _dmarxchn;
         void            (*rxIntr)(int); // Interrupt callback routine
         void            (*txIntr)(void); //Interrupt callback routine
-
+        void            (*asynctxIntr)(void);
+        void            (*asyncrxIntr)(void);
 	public:
 #if defined(__PIC32_PPS__)
 		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl, isrFunc isrHandler, int pinT, int pinR, ppsFunctionType ppsT, ppsFunctionType ppsR);
 #else
 		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl, isrFunc isrHandler);
 #endif
+        void TransmitCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle);
+        void ReceiveCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle);
 
 		void			doSerialInt(void);
         void            attachtxInterrupt(void (*callback)(void));
         void            attachInterrupt(void (*callback)(int));
+        void            attachasynctxInterrupt(void (*callback)(void));
+        void            attachasyncrxInterrupt(void (*callback)(void));
         void            detachInterrupt();
         
         void            enableAddressDetection (void);
@@ -125,13 +133,16 @@ class HardwareSerial : public Stream
 
 		void			begin(unsigned long baudRate);
         void            begin(unsigned long baudRate, uint8_t address);
+        void            beginasync(unsigned long baudRate, int dmarxchn, int dmatxchn);
 		void			end();
 		virtual int		available(void);
         virtual int     availableForWrite();
 		virtual int		peek();
 		virtual int		read(void);
-		virtual void	flush(void);
+		virtual void    read_async(uint8_t * buffer, size_t size);
+                virtual void	flush(void);
 		virtual void	purge(void);
+                virtual void    write_async(uint8_t * buffer, size_t size);
 		virtual	size_t	write(uint8_t);
                 virtual size_t  write(const char *str);
                 virtual size_t  write(const uint8_t *buffer, size_t size);
