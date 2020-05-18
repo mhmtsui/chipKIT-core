@@ -85,6 +85,7 @@ typedef struct {
 //* 		Object Class Declarations
 //* ------------------------------------------------------------
 
+
 class HardwareSerial : public Stream
 {
 	private:
@@ -110,22 +111,22 @@ class HardwareSerial : public Stream
                 uint8_t    _dmarxchn;
         void            (*rxIntr)(int); // Interrupt callback routine
         void            (*txIntr)(void); //Interrupt callback routine
-        void            (*asynctxIntr)(void);
-        void            (*asyncrxIntr)(void);
+
 	public:
 #if defined(__PIC32_PPS__)
 		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl, isrFunc isrHandler, int pinT, int pinR, ppsFunctionType ppsT, ppsFunctionType ppsR);
 #else
 		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl, isrFunc isrHandler);
 #endif
-        void TransmitCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle);
-        void ReceiveCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle);
 
 		void			doSerialInt(void);
         void            attachtxInterrupt(void (*callback)(void));
         void            attachInterrupt(void (*callback)(int));
         void            attachasynctxInterrupt(void (*callback)(void));
         void            attachasyncrxInterrupt(void (*callback)(void));
+        void            (*asynctxIntr)(void);
+        void            (*asyncrxIntr)(void);
+        
         void            detachInterrupt();
         
         void            enableAddressDetection (void);

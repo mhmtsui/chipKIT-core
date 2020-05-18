@@ -88,6 +88,10 @@
 #include "plib_dmac.h"
 #include "HardwareSerial.h"
 
+static void TransmitCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle);
+static void ReceiveCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle);
+
+
 extern "C"
 {
 void __USER_ISR IntSer0Handler(void);
@@ -434,13 +438,13 @@ void HardwareSerial::beginasync(unsigned long baudRate, int dmarxchn, int dmatxc
 #endif
     _dmarxchn = dmarxchn;
     if (_dmarxchn != -1){
-        DMAC_Initialize(_dmarxchn);
-        DMAC_ChannelCallbackRegister(_dmarxchn, ReceiveCompleteCallback,0);
+        DMAC_Initialize((DMAC_CHANNEL) _dmarxchn);
+        DMAC_ChannelCallbackRegister((DMAC_CHANNEL)_dmarxchn, ReceiveCompleteCallback, (uintptr_t) this);
     }
     _dmatxchn = dmatxchn;
     if (_dmatxchn != -1){
-        DMAC_Initialize(_dmatxchn);
-        DMAC_ChannelCallbackRegister(_dmatxchn, TransmitCompleteCallback,0);
+        DMAC_Initialize((DMAC_CHANNEL)_dmatxchn);
+        DMAC_ChannelCallbackRegister((DMAC_CHANNEL)_dmatxchn, TransmitCompleteCallback, (uintptr_t) this);
     }
 	/* Clear the interrupt flags, and set the interrupt enables for the
 	** interrupts used by this UART.
@@ -694,11 +698,11 @@ size_t HardwareSerial::write(const char *str) {
 }
 
 void HardwareSerial::write_async(uint8_t * buffer, size_t size){
-    DMAC_ChannelTransfer(_dmatxchn, (const void *)buffer, size, (const void *)&(uart->uxTx.reg), 1, 1);
+    DMAC_ChannelTransfer((DMAC_CHANNEL)_dmatxchn, (const void *)buffer, size, (const void *)&(uart->uxTx.reg), 1, 1);
 }
 
 void HardwareSerial::read_async(uint8_t * buffer, size_t size){
-    DMAC_ChannelTransfer(_dmarxchn,(const void *)&(uart->uxRx.reg), 1, (const void *)buffer, size, 1);
+    DMAC_ChannelTransfer((DMAC_CHANNEL)_dmarxchn,(const void *)&(uart->uxRx.reg), 1, (const void *)buffer, size, 1);
 }
 
 // Hardware serial has a buffer of length 1
@@ -716,15 +720,17 @@ HardwareSerial::operator int() {
     return 1;
 }
 
-void HardwareSerial::TransmitCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle){
-    if (asyncrxIntr != NULL){
-        asyncrxIntr();
+static void TransmitCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle){
+    HardwareSerial * h = (HardwareSerial *) contextHandle;
+    if (h->asyncrxIntr != NULL){
+        h->asyncrxIntr();
     }
 }
 
-void HardwareSerial::ReceiveCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle){
-    if (asynctxIntr != NULL){
-        asyncrxIntr();
+static void ReceiveCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle){
+    HardwareSerial * h = (HardwareSerial *) contextHandle;
+    if (h->asynctxIntr != NULL){
+        h->asyncrxIntr();
     }
 }
 
