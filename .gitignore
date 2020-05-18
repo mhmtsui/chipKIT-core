@@ -44,3 +44,5 @@ tmp
 
 #local jekyll site directory
 /docs/_site/
+
+.vscode/*
