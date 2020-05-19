@@ -438,12 +438,12 @@ void HardwareSerial::beginasync(unsigned long baudRate, int dmarxchn, int dmatxc
 #endif
     _dmarxchn = dmarxchn;
     if (_dmarxchn != -1){
-        DMAC_Initialize((DMAC_CHANNEL) _dmarxchn);
+        DMAC_Initialize((DMAC_CHANNEL) _dmarxchn, vec+1);
         DMAC_ChannelCallbackRegister((DMAC_CHANNEL)_dmarxchn, ReceiveCompleteCallback, (uintptr_t) this);
     }
     _dmatxchn = dmatxchn;
     if (_dmatxchn != -1){
-        DMAC_Initialize((DMAC_CHANNEL)_dmatxchn);
+        DMAC_Initialize((DMAC_CHANNEL)_dmatxchn, vec+2);
         DMAC_ChannelCallbackRegister((DMAC_CHANNEL)_dmatxchn, TransmitCompleteCallback, (uintptr_t) this);
     }
 	/* Clear the interrupt flags, and set the interrupt enables for the
@@ -451,8 +451,7 @@ void HardwareSerial::beginasync(unsigned long baudRate, int dmarxchn, int dmatxc
 	*/
 	ifs->clr = bit_rx + bit_tx + bit_err;	//clear all interrupt flags
 	iec->clr = bit_rx + bit_tx + bit_err;	//disable all interrupts
-    if (_dmarxchn == -1)
-        iec->set = bit_rx;
+    iec->set = bit_rx;
 	/* Initialize the UART itself.
 	**	http://www.chipkit.org/forum/viewtopic.php?f=7&t=213&p=948#p948
     ** Use high baud rate divisor for bauds over LOW_HIGH_BAUD_SPLIT
@@ -698,11 +697,16 @@ size_t HardwareSerial::write(const char *str) {
 }
 
 void HardwareSerial::write_async(uint8_t * buffer, size_t size){
-    DMAC_ChannelTransfer((DMAC_CHANNEL)_dmatxchn, (const void *)buffer, size, (const void *)&(uart->uxTx.reg), 1, 1);
+    if (_dmatxchn != -1){
+        iec->set = bit_tx + bit_rx; //enable tx interrupt
+        DMAC_ChannelTransfer((DMAC_CHANNEL)_dmatxchn, (const void *)buffer, size, (const void *)&(uart->uxTx.reg), 1, 1);
+    }
 }
 
 void HardwareSerial::read_async(uint8_t * buffer, size_t size){
-    DMAC_ChannelTransfer((DMAC_CHANNEL)_dmarxchn,(const void *)&(uart->uxRx.reg), 1, (const void *)buffer, size, 1);
+    if (_dmarxchn != -1){
+        DMAC_ChannelTransfer((DMAC_CHANNEL)_dmarxchn,(const void *)&(uart->uxRx.reg), 1, (const void *)buffer, size, 1);
+    }
 }
 
 // Hardware serial has a buffer of length 1
@@ -720,17 +724,17 @@ HardwareSerial::operator int() {
     return 1;
 }
 
-static void TransmitCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle){
+static void ReceiveCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle){
     HardwareSerial * h = (HardwareSerial *) contextHandle;
     if (h->asyncrxIntr != NULL){
         h->asyncrxIntr();
     }
 }
 
-static void ReceiveCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle){
+static void TransmitCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle){
     HardwareSerial * h = (HardwareSerial *) contextHandle;
     if (h->asynctxIntr != NULL){
-        h->asyncrxIntr();
+        h->asynctxIntr();
     }
 }
 

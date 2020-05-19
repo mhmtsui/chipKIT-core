@@ -319,16 +319,16 @@ bool DMAC_ChannelIsBusy (DMAC_CHANNEL channel);
 // */
 // void DMAC_Initialize( void );
 
-void DMAC_Initialize(DMAC_CHANNEL chn);
+void DMAC_Initialize(DMAC_CHANNEL chn, uint8_t vec);
 
-void DMA0_Initialize(void);
-void DMA1_Initialize(void);
-void DMA2_Initialize(void);
-void DMA3_Initialize(void);
-void DMA4_Initialize(void);
-void DMA5_Initialize(void);
-void DMA6_Initialize(void);
-void DMA7_Initialize(void);
+void DMA0_Initialize(uint8_t vec);
+void DMA1_Initialize(uint8_t vec);
+void DMA2_Initialize(uint8_t vec);
+void DMA3_Initialize(uint8_t vec);
+void DMA4_Initialize(uint8_t vec);
+void DMA5_Initialize(uint8_t vec);
+void DMA6_Initialize(uint8_t vec);
+void DMA7_Initialize(uint8_t vec);
 
 // DOM-IGNORE-BEGIN
 #ifdef __cplusplus  // Provide C++ Compatibility

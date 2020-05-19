@@ -337,31 +337,31 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define _SER1_RX_IN     PPS_IN_U1RX
 #define _SER1_RX_PIN    61               // RF4
 
-/* Serial2 UART2 STM32
+/* Serial2 UART2 Feeder
 */
-#define	_SER2_BASE		_UART3_BASE_ADDRESS
-#define	_SER2_IRQ		_UART3_FAULT_VECTOR
-#define	_SER2_VECTOR	_UART3_FAULT_VECTOR
+#define	_SER2_BASE		_UART2_BASE_ADDRESS
+#define	_SER2_IRQ		_UART2_FAULT_VECTOR
+#define	_SER2_VECTOR	_UART2_FAULT_VECTOR
 #define	_SER2_IPL_ISR	IPL2SRS
 #define	_SER2_IPL		2
 #define	_SER2_SPL		0
-#define _SER2_TX_OUT    PPS_OUT_U3TX
-#define _SER2_TX_PIN    14               // RB5
-#define _SER2_RX_IN     PPS_IN_U3RX
-#define _SER2_RX_PIN    20               // RB3
+#define _SER2_TX_OUT    PPS_OUT_U2TX
+#define _SER2_TX_PIN    2                // RE8
+#define _SER2_RX_IN     PPS_IN_U2RX
+#define _SER2_RX_PIN    7                // RE9
 
-/* Serial3 UART3 STM32
+/* Serial3 UART3 Printer
 */
-#define	_SER3_BASE		_UART2_BASE_ADDRESS
-#define	_SER3_IRQ		_UART2_FAULT_VECTOR
-#define	_SER3_VECTOR	_UART2_FAULT_VECTOR
+#define	_SER3_BASE		_UART3_BASE_ADDRESS
+#define	_SER3_IRQ		_UART3_FAULT_VECTOR
+#define	_SER3_VECTOR	_UART3_FAULT_VECTOR
 #define	_SER3_IPL_ISR	IPL2SRS
 #define	_SER3_IPL		2
 #define	_SER3_SPL		0
-#define _SER3_TX_OUT    PPS_OUT_U2TX
-#define _SER3_TX_PIN    2                // RE8
-#define _SER3_RX_IN     PPS_IN_U2RX
-#define _SER3_RX_PIN    7                // RE9
+#define _SER3_TX_OUT    PPS_OUT_U3TX
+#define _SER3_TX_PIN    14               // RB5
+#define _SER3_RX_IN     PPS_IN_U3RX
+#define _SER3_RX_PIN    20               // RB3
 
 /* Serial4 UART5 LCD
 */

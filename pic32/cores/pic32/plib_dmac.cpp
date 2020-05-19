@@ -233,31 +233,31 @@ static void DMAC_ChannelSetAddresses( DMAC_CHANNEL channel, const void *srcAddr,
 // *****************************************************************************
 
 // *****************************************************************************
-void DMAC_Initialize(DMAC_CHANNEL chn){
+void DMAC_Initialize(DMAC_CHANNEL chn, uint8_t vec){
   switch (chn){
     case DMAC_CHANNEL_0:
-      DMA0_Initialize();
+      DMA0_Initialize(vec);
     break;
     case DMAC_CHANNEL_1:
-      DMA1_Initialize();    
+      DMA1_Initialize(vec);    
     break;
     case DMAC_CHANNEL_2:
-      DMA2_Initialize();    
+      DMA2_Initialize(vec);    
     break;
     case DMAC_CHANNEL_3:
-      DMA3_Initialize();    
+      DMA3_Initialize(vec);    
     break;
     case DMAC_CHANNEL_4:
-      DMA4_Initialize();    
+      DMA4_Initialize(vec);    
     break;
     case DMAC_CHANNEL_5:
-      DMA5_Initialize();    
+      DMA5_Initialize(vec);    
     break;
     case DMAC_CHANNEL_6:
-      DMA6_Initialize();
+      DMA6_Initialize(vec);
     break;
     case DMAC_CHANNEL_7:
-      DMA7_Initialize();    
+      DMA7_Initialize(vec);    
     break;            
   }
 }
@@ -277,7 +277,7 @@ void DMAC_Initialize(DMAC_CHANNEL chn){
   Returns:
     void
 */
-void DMA0_Initialize(void){
+void DMA0_Initialize(uint8_t vec){
     DMAC_CHANNEL_OBJECT *chanObj;
 
     /* Enable the DMA module */
@@ -299,7 +299,7 @@ void DMA0_Initialize(void){
     /* DMA channel-level control registers.  They will have additional settings made when starting a transfer. */
     /* DMA channel 0 configuration */
     /* CHPRI = 0 */
-    DCH0CON = 0x0;
+    DCH0CON = 0x3;
     /* CHSIRQ = 147, SIRQEN = 1 */
     DCH0ECON = 0x9310;
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
@@ -327,7 +327,7 @@ void DMA0_Initialize(void){
   Returns:
     void
 */
-void DMA1_Initialize(void){
+void DMA1_Initialize(uint8_t vec){
     DMAC_CHANNEL_OBJECT *chanObj;
 
     /* Enable the DMA module */
@@ -349,9 +349,9 @@ void DMA1_Initialize(void){
     /* DMA channel-level control registers.  They will have additional settings made when starting a transfer. */
     /* DMA channel 1 configuration */
     /* CHPRI = 0 */
-    DCH1CON = 0x0;
-    /* CHSIRQ = 146, SIRQEN = 1 */
-    DCH1ECON = 0x9210;
+    DCH1CON = 0x2;
+    /* CHSIRQ = vec, SIRQEN = 1 */
+    DCH1ECON =  ((vec << 8) | (1 << 4));
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH1INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
@@ -376,7 +376,7 @@ void DMA1_Initialize(void){
   Returns:
     void
 */
-void DMA2_Initialize(void){
+void DMA2_Initialize(uint8_t vec){
     DMAC_CHANNEL_OBJECT *chanObj;
 
     /* Enable the DMA module */
@@ -398,9 +398,9 @@ void DMA2_Initialize(void){
     /* DMA channel-level control registers.  They will have additional settings made when starting a transfer. */
     /* DMA channel 2 configuration */
     /* CHPRI = 0 */
-    DCH2CON = 0x0;
-    /* CHSIRQ = 0, SIRQEN = 0 */
-    DCH2ECON = 0x0;
+    DCH2CON = 0x1;
+    /* CHSIRQ = vec, SIRQEN = 1 */
+    DCH2ECON =  ((vec << 8) | (1 << 4));
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH2INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
@@ -425,7 +425,7 @@ void DMA2_Initialize(void){
   Returns:
     void
 */
-void DMA3_Initialize(void){
+void DMA3_Initialize(uint8_t vec){
     DMAC_CHANNEL_OBJECT *chanObj;
 
     /* Enable the DMA module */
@@ -448,8 +448,8 @@ void DMA3_Initialize(void){
     /* DMA channel 3 configuration */
     /* CHPRI = 0 */
     DCH3CON = 0x0;
-    /* CHSIRQ = 0, SIRQEN = 0 */
-    DCH3ECON = 0x0;
+    /* CHSIRQ = vec, SIRQEN = 1 */
+    DCH3ECON =  ((vec << 8) | (1 << 4));
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH3INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
@@ -475,7 +475,7 @@ void DMA3_Initialize(void){
   Returns:
     void
 */
-void DMA4_Initialize(void){
+void DMA4_Initialize(uint8_t vec){
     DMAC_CHANNEL_OBJECT *chanObj;
 
     /* Enable the DMA module */
@@ -497,9 +497,9 @@ void DMA4_Initialize(void){
     /* DMA channel-level control registers.  They will have additional settings made when starting a transfer. */
     /* DMA channel 4 configuration */
     /* CHPRI = 0 */
-    DCH4CON = 0x0;
-    /* CHSIRQ = 0, SIRQEN = 0 */
-    DCH4ECON = 0x0;
+    DCH4CON = 0x3;
+    /* CHSIRQ = vec, SIRQEN = 1 */
+    DCH4ECON =  ((vec << 8) | (1 << 4));
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH4INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
@@ -524,7 +524,7 @@ void DMA4_Initialize(void){
   Returns:
     void
 */
-void DMA5_Initialize(void){
+void DMA5_Initialize(uint8_t vec){
     DMAC_CHANNEL_OBJECT *chanObj;
 
     /* Enable the DMA module */
@@ -546,9 +546,9 @@ void DMA5_Initialize(void){
     /* DMA channel-level control registers.  They will have additional settings made when starting a transfer. */
     /* DMA channel 5 configuration */
     /* CHPRI = 0 */
-    DCH5CON = 0x0;
-    /* CHSIRQ = 0, SIRQEN = 0 */
-    DCH5ECON = 0x0;
+    DCH5CON = 0x2;
+    /* CHSIRQ = vec, SIRQEN = 1 */
+    DCH5ECON =  ((vec << 8) | (1 << 4));
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH5INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
@@ -573,7 +573,7 @@ void DMA5_Initialize(void){
   Returns:
     void
 */
-void DMA6_Initialize(void){
+void DMA6_Initialize(uint8_t vec){
     DMAC_CHANNEL_OBJECT *chanObj;
 
     /* Enable the DMA module */
@@ -595,9 +595,9 @@ void DMA6_Initialize(void){
     /* DMA channel-level control registers.  They will have additional settings made when starting a transfer. */
     /* DMA channel 6 configuration */
     /* CHPRI = 0 */
-    DCH6CON = 0x0;
-    /* CHSIRQ = 0, SIRQEN = 0 */
-    DCH6ECON = 0x0;
+    DCH6CON = 0x1;
+    /* CHSIRQ = vec, SIRQEN = 1 */
+    DCH6ECON =  ((vec << 8) | (1 << 4));
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH6INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
@@ -622,7 +622,7 @@ void DMA6_Initialize(void){
   Returns:
     void
 */
-void DMA7_Initialize(void){
+void DMA7_Initialize(uint8_t vec){
     DMAC_CHANNEL_OBJECT *chanObj;
 
     /* Enable the DMA module */
@@ -645,8 +645,8 @@ void DMA7_Initialize(void){
     /* DMA channel 7 configuration */
     /* CHPRI = 0 */
     DCH7CON = 0x0;
-    /* CHSIRQ = 0, SIRQEN = 0 */
-    DCH7ECON = 0x0;
+    /* CHSIRQ = vec, SIRQEN = 1 */
+    DCH7ECON =  ((vec << 8) | (1 << 4));
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH7INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
@@ -861,7 +861,7 @@ bool DMAC_ChannelTransfer( DMAC_CHANNEL channel, const void *srcAddr, size_t src
          regs = (volatile uint32_t *)(_DMAC_BASE_ADDRESS + 0x60 + (channel * 0xC0) + 0x10);
 
         /* Initiate transfer if user did not set up channel for interrupt-initiated transfer. */
-        if((*(volatile uint32_t *)(regs) & _DCH1ECON_SIRQEN_MASK) == 0)
+        //if((*(volatile uint32_t *)(regs) & _DCH1ECON_SIRQEN_MASK) == 0)
         {
             /* CFORCE = 1 */
             regs = (volatile uint32_t *)(_DMAC_BASE_ADDRESS + 0x60 + (channel * 0xC0) + 0x10)+2;
