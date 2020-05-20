@@ -300,8 +300,8 @@ void DMA0_Initialize(uint8_t vec){
     /* DMA channel 0 configuration */
     /* CHPRI = 0 */
     DCH0CON = 0x3;
-    /* CHSIRQ = 147, SIRQEN = 1 */
-    DCH0ECON = 0x9310;
+    /* CHSIRQ = vec, SIRQEN = 1 */
+    DCH0ECON = ((vec << 8) | (1 << 4));
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH0INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
@@ -861,7 +861,7 @@ bool DMAC_ChannelTransfer( DMAC_CHANNEL channel, const void *srcAddr, size_t src
          regs = (volatile uint32_t *)(_DMAC_BASE_ADDRESS + 0x60 + (channel * 0xC0) + 0x10);
 
         /* Initiate transfer if user did not set up channel for interrupt-initiated transfer. */
-        //if((*(volatile uint32_t *)(regs) & _DCH1ECON_SIRQEN_MASK) == 0)
+        if((*(volatile uint32_t *)(regs) & _DCH1ECON_SIRQEN_MASK) == 0)
         {
             /* CFORCE = 1 */
             regs = (volatile uint32_t *)(_DMAC_BASE_ADDRESS + 0x60 + (channel * 0xC0) + 0x10)+2;
@@ -870,6 +870,13 @@ bool DMAC_ChannelTransfer( DMAC_CHANNEL channel, const void *srcAddr, size_t src
     }
 
     return returnStatus;
+}
+
+void DMAC_ChannelForceStart(DMAC_CHANNEL channel){
+    volatile uint32_t *regs;
+    /* CFORCE = 1 */
+    regs = (volatile uint32_t *)(_DMAC_BASE_ADDRESS + 0x60 + (channel * 0xC0) + 0x10)+2;
+    *(volatile uint32_t *)(regs) = _DCH0ECON_CFORCE_MASK;
 }
 
 // *****************************************************************************

@@ -246,6 +246,8 @@ void DMAC_ChannelCallbackRegister(DMAC_CHANNEL channel, const DMAC_CHANNEL_CALLB
 */
 bool DMAC_ChannelTransfer( DMAC_CHANNEL channel, const void *srcAddr, size_t srcSize, const void *destAddr, size_t destSize, size_t cellSize);
 
+void DMAC_ChannelForceStart(DMAC_CHANNEL channel);
+
 // *****************************************************************************
 /* Function:
    void DMAC_ChannelDisable (DMAC_CHANNEL channel)
