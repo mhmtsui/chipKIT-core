@@ -317,7 +317,7 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define	_SER0_IRQ       _UART4_FAULT_VECTOR
 #define	_SER0_VECTOR    _UART4_FAULT_VECTOR
 #define	_SER0_IPL_ISR   IPL2SRS
-#define	_SER0_IPL       2
+#define	_SER0_IPL       4
 #define	_SER0_SPL       0
 #define _SER0_TX_OUT    PPS_OUT_U4TX     // (RPF8R = 0b0010)   RF8 -> U4TX   
 #define _SER0_TX_PIN    1                // REBIRDY2/RPF8/SCL3/RF8   
@@ -330,7 +330,7 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define	_SER1_IRQ		_UART1_FAULT_VECTOR
 #define	_SER1_VECTOR	_UART1_FAULT_VECTOR
 #define	_SER1_IPL_ISR	IPL2SRS
-#define	_SER1_IPL		2
+#define	_SER1_IPL		4
 #define	_SER1_SPL		0
 #define _SER1_TX_OUT    PPS_OUT_U1TX
 #define _SER1_TX_PIN    57               // RF5
@@ -343,7 +343,7 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define	_SER2_IRQ		_UART2_FAULT_VECTOR
 #define	_SER2_VECTOR	_UART2_FAULT_VECTOR
 #define	_SER2_IPL_ISR	IPL2SRS
-#define	_SER2_IPL		2
+#define	_SER2_IPL		4
 #define	_SER2_SPL		0
 #define _SER2_TX_OUT    PPS_OUT_U2TX
 #define _SER2_TX_PIN    2                // RE8
@@ -356,7 +356,7 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define	_SER3_IRQ		_UART3_FAULT_VECTOR
 #define	_SER3_VECTOR	_UART3_FAULT_VECTOR
 #define	_SER3_IPL_ISR	IPL2SRS
-#define	_SER3_IPL		2
+#define	_SER3_IPL		4
 #define	_SER3_SPL		0
 #define _SER3_TX_OUT    PPS_OUT_U3TX
 #define _SER3_TX_PIN    14               // RB5
@@ -369,7 +369,7 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define	_SER4_IRQ		_UART5_FAULT_VECTOR
 #define	_SER4_VECTOR	_UART5_FAULT_VECTOR
 #define	_SER4_IPL_ISR	IPL2SRS
-#define	_SER4_IPL		2
+#define	_SER4_IPL		4
 #define	_SER4_SPL		0
 #define _SER4_TX_OUT    PPS_OUT_U5TX
 #define _SER4_TX_PIN    58               // RG0
@@ -382,7 +382,7 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define	_SER5_IRQ		_UART6_FAULT_VECTOR
 #define	_SER5_VECTOR	_UART6_FAULT_VECTOR
 #define	_SER5_IPL_ISR	IPL2SRS
-#define	_SER5_IPL		2
+#define	_SER5_IPL		4
 #define	_SER5_SPL		0
 #define _SER5_TX_OUT    PPS_OUT_U6TX
 #define _SER5_TX_PIN    24               // RB8
@@ -403,7 +403,7 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define	_DSPI0_TX_IRQ		_SPI2_TX_VECTOR
 #define	_DSPI0_VECTOR		_SPI2_FAULT_VECTOR
 #define _DSPI0_IPL_ISR		IPL3SRS
-#define	_DSPI0_IPL			3
+#define	_DSPI0_IPL			5
 #define	_DSPI0_SPL			0
 
 #define _DSPI0_MISO_IN		PPS_IN_SDI2
@@ -419,7 +419,7 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define	_DSPI1_TX_IRQ		_SPI1_TX_VECTOR
 #define	_DSPI1_VECTOR		_SPI1_FAULT_VECTOR
 #define _DSPI1_IPL_ISR		IPL3SRS
-#define	_DSPI1_IPL			3
+#define	_DSPI1_IPL			5
 #define	_DSPI1_SPL			0
 
 #define _DSPI1_MISO_IN		PPS_IN_SDI1
@@ -434,7 +434,7 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define	_DSPI2_TX_IRQ		_SPI3_TX_VECTOR
 #define	_DSPI2_VECTOR		_SPI3_FAULT_VECTOR
 #define _DSPI2_IPL_ISR		IPL3SRS
-#define	_DSPI2_IPL			3
+#define	_DSPI2_IPL			5
 #define	_DSPI2_SPL			0
 
 #define _DSPI2_MISO_IN		PPS_IN_SDI3
@@ -449,7 +449,7 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define	_DSPI3_TX_IRQ		_SPI4_TX_VECTOR
 #define	_DSPI3_VECTOR		_SPI4_FAULT_VECTOR
 #define _DSPI3_IPL_ISR		IPL3SRS
-#define	_DSPI3_IPL			3
+#define	_DSPI3_IPL			5
 #define	_DSPI3_SPL			0
 
 #define _DSPI3_MISO_IN		PPS_IN_SDI4
@@ -464,7 +464,7 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define	_DSPI6_TX_IRQ		_SPI6_TX_VECTOR
 #define	_DSPI6_VECTOR		_SPI6_FAULT_VECTOR
 #define _DSPI6_IPL_ISR		IPL3SRS
-#define	_DSPI6_IPL			3
+#define	_DSPI6_IPL			5
 #define	_DSPI6_SPL			0
 
 #define _DSPI6_MOSI_OUT		PPS_OUT_SDO6

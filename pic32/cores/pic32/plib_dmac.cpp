@@ -305,7 +305,7 @@ void DMA0_Initialize(uint8_t vec){
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH0INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
-    IPC33SET = 0x80000 | 0x0;  /* DMA0:  Priority 2 / Subpriority 0 */
+    IPC33SET = 0x110000 | 0x0;  /* DMA0:  Priority 2 / Subpriority 0 */
     setIntVector(_DMA0_VECTOR, DMA0_Handler);
 
     /* Enable DMA channel interrupts */
@@ -355,7 +355,7 @@ void DMA1_Initialize(uint8_t vec){
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH1INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
-    IPC33SET = 0x8000000 | 0x0;  /* DMA1:  Priority 2 / Subpriority 0 */
+    IPC33SET = 0x11000000 | 0x0;  /* DMA1:  Priority 2 / Subpriority 0 */
     setIntVector(_DMA1_VECTOR, DMA1_Handler);
     /* Enable DMA channel interrupts */
     IEC4SET |= 0x80;
@@ -404,7 +404,7 @@ void DMA2_Initialize(uint8_t vec){
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH2INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
-    IPC34SET = 0x8 | 0x0;  /* DMA2:  Priority 2 / Subpriority 0 */
+    IPC34SET = 0x11 | 0x0;  /* DMA2:  Priority 2 / Subpriority 0 */
     setIntVector(_DMA2_VECTOR, DMA2_Handler);
     /* Enable DMA channel interrupts */
     IEC4SET |= 0x100;
@@ -453,7 +453,7 @@ void DMA3_Initialize(uint8_t vec){
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH3INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
-    IPC34SET = 0x800 | 0x0;  /* DMA3:  Priority 2 / Subpriority 0 */    
+    IPC34SET = 0x1100 | 0x0;  /* DMA3:  Priority 2 / Subpriority 0 */    
     setIntVector(_DMA3_VECTOR, DMA3_Handler);
     /* Enable DMA channel interrupts */
     IEC4SET |= 0x200;
@@ -503,7 +503,7 @@ void DMA4_Initialize(uint8_t vec){
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH4INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
-    IPC34SET = 0x80000 | 0x0;  /* DMA4:  Priority 2 / Subpriority 0 */    
+    IPC34SET = 0x110000 | 0x0;  /* DMA4:  Priority 2 / Subpriority 0 */    
     setIntVector(_DMA4_VECTOR, DMA4_Handler);
     /* Enable DMA channel interrupts */
     IEC4SET |= 0x400;
@@ -552,7 +552,7 @@ void DMA5_Initialize(uint8_t vec){
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH5INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
-    IPC34SET = 0x8000000 | 0x0;  /* DMA5:  Priority 2 / Subpriority 0 */     
+    IPC34SET = 0x11000000 | 0x0;  /* DMA5:  Priority 2 / Subpriority 0 */     
     setIntVector(_DMA5_VECTOR, DMA5_Handler);
     /* Enable DMA channel interrupts */
     IEC4SET |= 0x800;
@@ -601,7 +601,7 @@ void DMA6_Initialize(uint8_t vec){
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH6INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
-    IPC35SET = 0x8 | 0x0;  /* DMA6:  Priority 2 / Subpriority 0 */
+    IPC35SET = 0x11 | 0x0;  /* DMA6:  Priority 2 / Subpriority 0 */
     setIntVector(_DMA6_VECTOR, DMA6_Handler);
     /* Enable DMA channel interrupts */
     IEC4SET |= 0x1000;
@@ -650,7 +650,7 @@ void DMA7_Initialize(uint8_t vec){
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH7INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
-    IPC35SET = 0x800 | 0x0;  /* DMA7:  Priority 2 / Subpriority 0 */
+    IPC35SET = 0x1100 | 0x0;  /* DMA7:  Priority 2 / Subpriority 0 */
     setIntVector(_DMA7_VECTOR, DMA7_Handler);
     /* Enable DMA channel interrupts */
     IEC4SET |= 0x2000;
