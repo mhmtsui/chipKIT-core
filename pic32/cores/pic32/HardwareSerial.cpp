@@ -443,9 +443,17 @@ void HardwareSerial::beginasync(unsigned long baudRate, int dmarxchn, int dmatxc
         // // the MZ part works off of offset tables
         // // we must fill in the tx and rx VECs to point
         // // to the ERR VEC so all 3 VECs use the same ISR
-         setIntVector(vec+1, aisr);
-         setIntVector(vec+2, aisr);
-
+        if (_dmarxchn == -1){
+            setIntVector(vec+1, isr);
+        }else{
+            setIntVector(vec+1, aisr);
+        }
+         if (_dmatxchn == -1){
+             setIntVector(vec+2, isr);
+         }else{
+             setIntVector(vec+2, aisr);
+         }
+        
         // and set the priorities for the other 2 vectors.
         setIntPriority(vec+1, ipl, spl);
         setIntPriority(vec+2, ipl, spl);
@@ -465,7 +473,8 @@ void HardwareSerial::beginasync(unsigned long baudRate, int dmarxchn, int dmatxc
 	*/
 	ifs->clr = bit_rx + bit_tx + bit_err;	//clear all interrupt flags
 	iec->clr = bit_rx + bit_tx + bit_err;	//disable all interrupts
-    //iec->set = bit_rx;
+    if (_dmarxchn == -1)
+        iec->set = bit_rx;
 	/* Initialize the UART itself.
 	**	http://www.chipkit.org/forum/viewtopic.php?f=7&t=213&p=948#p948
     ** Use high baud rate divisor for bauds over LOW_HIGH_BAUD_SPLIT
@@ -712,7 +721,7 @@ size_t HardwareSerial::write(const char *str) {
 
 void HardwareSerial::write_async(uint8_t * buffer, size_t size){
     if (_dmatxchn != -1){
-        //iec->set = bit_tx; //enable tx interrupt
+        iec->set = bit_tx; //enable tx interrupt
         DMAC_ChannelTransfer((DMAC_CHANNEL)_dmatxchn, (const void *)buffer, size, (const void *)&(uart->uxTx.reg), 1, 1);
         DMAC_ChannelForceStart((DMAC_CHANNEL)_dmatxchn);
     }

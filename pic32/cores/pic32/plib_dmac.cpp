@@ -398,7 +398,7 @@ void DMA2_Initialize(uint8_t vec){
     /* DMA channel-level control registers.  They will have additional settings made when starting a transfer. */
     /* DMA channel 2 configuration */
     /* CHPRI = 0 */
-    DCH2CON = 0x1;
+    DCH2CON = 0x3;
     /* CHSIRQ = vec, SIRQEN = 1 */
     DCH2ECON =  ((vec << 8) | (1 << 4));
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
@@ -447,7 +447,7 @@ void DMA3_Initialize(uint8_t vec){
     /* DMA channel-level control registers.  They will have additional settings made when starting a transfer. */
     /* DMA channel 3 configuration */
     /* CHPRI = 0 */
-    DCH3CON = 0x0;
+    DCH3CON = 0x2;
     /* CHSIRQ = vec, SIRQEN = 1 */
     DCH3ECON =  ((vec << 8) | (1 << 4));
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
@@ -595,7 +595,7 @@ void DMA6_Initialize(uint8_t vec){
     /* DMA channel-level control registers.  They will have additional settings made when starting a transfer. */
     /* DMA channel 6 configuration */
     /* CHPRI = 0 */
-    DCH6CON = 0x1;
+    DCH6CON = 0x3;
     /* CHSIRQ = vec, SIRQEN = 1 */
     DCH6ECON =  ((vec << 8) | (1 << 4));
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
@@ -644,7 +644,7 @@ void DMA7_Initialize(uint8_t vec){
     /* DMA channel-level control registers.  They will have additional settings made when starting a transfer. */
     /* DMA channel 7 configuration */
     /* CHPRI = 0 */
-    DCH7CON = 0x0;
+    DCH7CON = 0x2;
     /* CHSIRQ = vec, SIRQEN = 1 */
     DCH7ECON =  ((vec << 8) | (1 << 4));
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
