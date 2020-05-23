@@ -337,7 +337,7 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define _SER1_RX_IN     PPS_IN_U1RX
 #define _SER1_RX_PIN    61               // RF4
 
-/* Serial2 UART2 Feeder
+/* Serial2 UART2
 */
 #define	_SER2_BASE		_UART2_BASE_ADDRESS
 #define	_SER2_IRQ		_UART2_FAULT_VECTOR
@@ -350,7 +350,7 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define _SER2_RX_IN     PPS_IN_U2RX
 #define _SER2_RX_PIN    7                // RE9
 
-/* Serial3 UART3 Printer
+/* Serial3 UART3 STM32
 */
 #define	_SER3_BASE		_UART3_BASE_ADDRESS
 #define	_SER3_IRQ		_UART3_FAULT_VECTOR
@@ -457,7 +457,7 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define _DSPI3_MOSI_OUT		PPS_OUT_SDO4
 #define _DSPI3_MOSI_PIN		3		    // RD4
 
-// 595
+// DSPI6
 #define	_DSPI6_BASE			_SPI6_BASE_ADDRESS
 #define	_DSPI6_ERR_IRQ		_SPI6_FAULT_VECTOR
 #define	_DSPI6_RX_IRQ		_SPI6_RX_VECTOR
