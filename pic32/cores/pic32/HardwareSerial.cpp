@@ -721,7 +721,7 @@ size_t HardwareSerial::write(const char *str) {
 
 void HardwareSerial::write_async(uint8_t * buffer, size_t size){
     if (_dmatxchn != -1){
-        iec->set = bit_tx; //enable tx interrupt
+        //iec->set = bit_tx; //enable tx interrupt
         DMAC_ChannelTransfer((DMAC_CHANNEL)_dmatxchn, (const void *)buffer, size, (const void *)&(uart->uxTx.reg), 1, 1);
         DMAC_ChannelForceStart((DMAC_CHANNEL)_dmatxchn);
     }
