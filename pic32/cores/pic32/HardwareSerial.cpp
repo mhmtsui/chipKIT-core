@@ -399,7 +399,14 @@ void HardwareSerial::begin(unsigned long baudRate, uint8_t address) {
     uart->uxMode.set = 1 << _UARTMODE_ON; // enable UART module
 }
 
-void HardwareSerial::beginasync(unsigned long baudRate, int dmarxchn, int dmatxchn){
+//#if defined(__PIC32MZXX__)
+void HardwareSerial::beginasync(unsigned long baudRate, int dmarxchn, int dmatxchn, bool rx_continuous, bool rx_pattern_match, 
+                                uint16_t rxpattern, bool tx_continuous, bool tx_pattern_match, uint16_t txpattern){
+// #else
+// void HardwareSerial::beginasync(unsigned long baudRate, int dmarxchn, int dmatxchn, bool rx_continuous, 
+//                                 bool rx_pattern_match, uint8_t rxpattern, bool tx_continuous,
+//                                 bool tx_pattern_match, uint8_t txpattern){
+// #endif
     /*handling pins */
 #if defined(__PIC32_PPS__)
 
@@ -460,12 +467,12 @@ void HardwareSerial::beginasync(unsigned long baudRate, int dmarxchn, int dmatxc
 #endif
     _dmarxchn = dmarxchn;
     if (_dmarxchn != -1){
-        DMAC_Initialize((DMAC_CHANNEL) _dmarxchn, vec+1);
+        DMAC_Initialize((DMAC_CHANNEL) _dmarxchn, vec+1, rx_continuous, rx_pattern_match, rxpattern);
         DMAC_ChannelCallbackRegister((DMAC_CHANNEL)_dmarxchn, ReceiveCompleteCallback, (uintptr_t) this);
     }
     _dmatxchn = dmatxchn;
     if (_dmatxchn != -1){
-        DMAC_Initialize((DMAC_CHANNEL)_dmatxchn, vec+2);
+        DMAC_Initialize((DMAC_CHANNEL)_dmatxchn, vec+2, tx_continuous, tx_pattern_match, txpattern);
         DMAC_ChannelCallbackRegister((DMAC_CHANNEL)_dmatxchn, TransmitCompleteCallback, (uintptr_t) this);
     }
 	/* Clear the interrupt flags, and set the interrupt enables for the

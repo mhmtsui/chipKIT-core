@@ -46,7 +46,7 @@
 #ifndef __LANGUAGE_C__
 #define __LANGUAGE_C__
 #endif
-
+#include <p32xxxx.h>
 #include "wiring.h"
 
 #ifdef __cplusplus
@@ -136,7 +136,13 @@ class HardwareSerial : public Stream
 
 		void			begin(unsigned long baudRate);
         void            begin(unsigned long baudRate, uint8_t address);
-        void            beginasync(unsigned long baudRate, int dmarxchn, int dmatxchn);
+//#if defined(__PIC32MZXX__)
+        void            beginasync(unsigned long baudRate=0, int dmarxchn=-1, int dmatxchn=-1, bool rx_continuous=false, bool rx_pattern_match = false,
+                                   uint16_t rxpattern=0, bool tx_continuous=false, bool tx_pattern_match=false, uint16_t txpattern=0);
+// #else
+//         void            beginasync(unsigned long baudRate=0, int dmarxchn=-1, int dmatxchn=-1, bool rx_continuous=false, bool rx_pattern_match=false,
+//                                    uint8_t rxpattern=0, bool tx_continuous=false, bool tx_pattern_match=false, uint8_t txpattern=0);
+// #endif
 		void			end();
 		virtual int		available(void);
         virtual int     availableForWrite();

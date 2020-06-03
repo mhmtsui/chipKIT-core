@@ -320,17 +320,20 @@ bool DMAC_ChannelIsBusy (DMAC_CHANNEL channel);
 //     </code>
 // */
 // void DMAC_Initialize( void );
+//#if defined(__PIC32MZXX__)
+void DMAC_Initialize(DMAC_CHANNEL chn, uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern);
+//#else
+//void DMAC_Initialize(DMAC_CHANNEL chn, uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern);
+//#endif
 
-void DMAC_Initialize(DMAC_CHANNEL chn, uint8_t vec);
-
-void DMA0_Initialize(uint8_t vec);
-void DMA1_Initialize(uint8_t vec);
-void DMA2_Initialize(uint8_t vec);
-void DMA3_Initialize(uint8_t vec);
-void DMA4_Initialize(uint8_t vec);
-void DMA5_Initialize(uint8_t vec);
-void DMA6_Initialize(uint8_t vec);
-void DMA7_Initialize(uint8_t vec);
+// void DMA0_Initialize(uint8_t vec);
+// void DMA1_Initialize(uint8_t vec);
+// void DMA2_Initialize(uint8_t vec);
+// void DMA3_Initialize(uint8_t vec);
+// void DMA4_Initialize(uint8_t vec);
+// void DMA5_Initialize(uint8_t vec);
+// void DMA6_Initialize(uint8_t vec);
+// void DMA7_Initialize(uint8_t vec);
 
 // DOM-IGNORE-BEGIN
 #ifdef __cplusplus  // Provide C++ Compatibility
