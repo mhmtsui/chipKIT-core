@@ -726,19 +726,23 @@ size_t HardwareSerial::write(const char *str) {
     return write((const uint8_t *)str, strlen(str));
 }
 
-void HardwareSerial::write_async(uint8_t * buffer, size_t size){
+bool HardwareSerial::write_async(uint8_t * buffer, size_t size){
     if (_dmatxchn != -1){
         //iec->set = bit_tx; //enable tx interrupt
-        DMAC_ChannelTransfer((DMAC_CHANNEL)_dmatxchn, (const void *)buffer, size, (const void *)&(uart->uxTx.reg), 1, 1);
-        DMAC_ChannelForceStart((DMAC_CHANNEL)_dmatxchn);
+        if (DMAC_ChannelTransfer((DMAC_CHANNEL)_dmatxchn, (const void *)buffer, size, (const void *)&(uart->uxTx.reg), 1, 1)){
+            DMAC_ChannelForceStart((DMAC_CHANNEL)_dmatxchn);
+            return true;
+        }
     }
+    return false;
 }
 
-void HardwareSerial::read_async(uint8_t * buffer, size_t size){
+bool HardwareSerial::read_async(uint8_t * buffer, size_t size){
     if (_dmarxchn != -1){
-        DMAC_ChannelTransfer((DMAC_CHANNEL)_dmarxchn,(const void *)&(uart->uxRx.reg), 1, (const void *)buffer, size, 1);
+        return DMAC_ChannelTransfer((DMAC_CHANNEL)_dmarxchn,(const void *)&(uart->uxRx.reg), 1, (const void *)buffer, size, 1);
         //DMAC_ChannelForceStart((DMAC_CHANNEL)_dmarxchn);
     }
+    return false;
 }
 
 // Hardware serial has a buffer of length 1

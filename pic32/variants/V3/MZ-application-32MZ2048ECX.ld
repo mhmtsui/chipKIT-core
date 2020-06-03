@@ -50,8 +50,8 @@ ENTRY(_reset)
  *                     the command line using the linker's --defsym option.
  */
 EXTERN (_min_stack_size _min_heap_size)
-PROVIDE(_min_stack_size = 0x2000) ;
-PROVIDE(_min_heap_size = 0x2000) ;
+PROVIDE(_min_stack_size = 0x1000) ;
+PROVIDE(_min_heap_size = 0x1000) ;
 
 /*************************************************************************
  * Processor-specific object file.  Contains SFR definitions.

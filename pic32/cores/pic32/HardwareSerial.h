@@ -148,10 +148,10 @@ class HardwareSerial : public Stream
         virtual int     availableForWrite();
 		virtual int		peek();
 		virtual int		read(void);
-		virtual void    read_async(uint8_t * buffer, size_t size);
+		virtual bool    read_async(uint8_t * buffer, size_t size);
                 virtual void	flush(void);
 		virtual void	purge(void);
-                virtual void    write_async(uint8_t * buffer, size_t size);
+                virtual bool    write_async(uint8_t * buffer, size_t size);
 		virtual	size_t	write(uint8_t);
                 virtual size_t  write(const char *str);
                 virtual size_t  write(const uint8_t *buffer, size_t size);

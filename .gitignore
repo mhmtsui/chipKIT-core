@@ -46,3 +46,5 @@ tmp
 /docs/_site/
 
 .vscode/*
+*.db
+*.ffs_db
