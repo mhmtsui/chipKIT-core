@@ -1030,7 +1030,7 @@ hestia_V3.build.mcu=32MZ2048EFG100
 hestia_V3.build.f_cpu=200000000UL
 hestia_V3.build.core=pic32
 hestia_V3.ldcommon=chipKIT-application-COMMON-MZ.ld
-hestia_V3.build.variant=V2
+hestia_V3.build.variant=V3
 hestia_V3.build.ldscript.path={build.variant.path}
 
 hestia_V3.usb.enabled=true

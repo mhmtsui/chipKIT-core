@@ -274,14 +274,14 @@ const uint16_t digital_pin_to_timer_PGM[] =
     _TIMER_IC1,                 //    2   RE08    AN25/AERXD0/RPE8/RE8
     _TIMER_OC1,                 //    3   RD00    EMDIO/AEMDIO/RPD0/RTCC/INT0/RD0
     NOT_ON_TIMER,               //    4   RA03    EBIRDY1/SDA2/RA3
-    _TIMER_OC2,                 //    5   RD01    RPD1/SCK1/RD1
+    NOT_ON_TIMER,               //    5   RD01    RPD1/SCK1/RD1
     _TIMER_OC3,                 //    6   RD02    EBID14/ETXEN/RPD2/PMD14/RD2    
     _TIMER_IC2,                 //    7   RE09    AN26/AERXD1/RPE9/RE9  
     _TIMER_IC3,                 //    8   RA14    AETXCLK/RPA14/SCL1/RA14 
-    _TIMER_OC4,                 //    9   RD03    EBID15/ETXCLK/RPD3/PMD15/RD3   
-    _TIMER_IC6 | _TIMER_OC9,    //    10  RG09    EBIA2/AN11/C2INC/ERXCLK/EREFCLK/AERXCLK/AEREFCLK/RPG9/PMA2/RG9  
+    NOT_ON_TIMER,                 //    9   RD03    EBID15/ETXCLK/RPD3/PMD15/RD3   
+    _TIMER_IC6,                 //    10  RG09    EBIA2/AN11/C2INC/ERXCLK/EREFCLK/AERXCLK/AEREFCLK/RPG9/PMA2/RG9  
     _TIMER_OC7,                 //    11  RD11    EMDC/AEMDC/RPD11/RD11
-    NOT_ON_TIMER,               //    12  RF00    EBID11/ETXD1/RPF0/PMD11/RF0
+    _TIMER_OC4,               //    12  RF00    EBID11/ETXD1/RPF0/PMD11/RF0
     NOT_ON_TIMER,               //    13  RG06    AN14/C1IND/ECOL/RPG6/SCK2/RG6                   (User LED1)
     NOT_ON_TIMER,               //    14  RB05    AN45/C1INA/RPB5/RB5                             (AN0)   
     NOT_ON_TIMER,               //    15  RB09    EBIA7/AN49/RPB9/PMA7/RB9                        (AIN1)  
@@ -303,7 +303,7 @@ const uint16_t digital_pin_to_timer_PGM[] =
     NOT_ON_TIMER,               //    31  RE05    EBID5/AN17/RPE5/PMD5/RE5
     NOT_ON_TIMER,               //    32  RE06    EBID6/AN16/PMD6/RE6
     NOT_ON_TIMER,               //    33  RE07    EBID7/AN15/PMD7/RE7 
-    _TIMER_TCK4,                //    34  RD05    SQICS1/RPD5/RD5
+    _TIMER_OC2,                 //    34  RD05    SQICS1/RPD5/RD5
     _TIMER_IC7 | _TIMER_TCK2,   //    35  RC01    EBIA6/AN22/RPC1/PMA6/RC1
     _TIMER_TCK6,                //    36  RF01    EBID10/ETXD0/RPF1/PMD10/RF1
     NOT_ON_TIMER,               //    37  RA02    EBICS0/SCL2/RA2
@@ -661,14 +661,14 @@ const uint8_t digital_pin_to_pps_in_PGM[] = {
 const uint8_t output_compare_to_digital_pin_PGM[] = {
     NOT_PPS_PIN,
     NOT_PPS_PIN,
+    PIN_OC2,
+    NOT_PPS_PIN,
+    PIN_OC4,
     NOT_PPS_PIN,
     NOT_PPS_PIN,
+    PIN_OC7,
     NOT_PPS_PIN,
-    NOT_PPS_PIN,
-    NOT_PPS_PIN,
-    NOT_PPS_PIN,
-    NOT_PPS_PIN,
-    PIN_OC9,
+    NOT_PPS_PIN
 };
 
 /* ------------------------------------------------------------ */

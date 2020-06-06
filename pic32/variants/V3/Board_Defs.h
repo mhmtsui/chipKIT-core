@@ -21,7 +21,7 @@
 */
 #define	NUM_DIGITAL_PINS	71
 #define	NUM_ANALOG_PINS		14
-#define NUM_OC_PINS			6
+#define NUM_OC_PINS			9
 #define	NUM_IC_PINS			5
 #define	NUM_TCK_PINS		4
 #define	NUM_INT_PINS		5
@@ -105,7 +105,9 @@
 // #define	PIN_OC4		9
 // #define	PIN_OC5		10
 // #define	PIN_OC6		11
-#define	PIN_OC9		10
+#define PIN_OC7     11
+#define PIN_OC4     12
+#define	PIN_OC2		34
 
 // #define PIN_IC1		2      
 // #define PIN_IC2		7      
