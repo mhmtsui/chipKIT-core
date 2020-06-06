@@ -19,7 +19,7 @@
 
 /* Define the Microcontroller peripherals available on the board.
 */
-#define	NUM_DIGITAL_PINS	71
+#define	NUM_DIGITAL_PINS	74
 #define	NUM_ANALOG_PINS		14
 #define NUM_OC_PINS			9
 #define	NUM_IC_PINS			5
@@ -37,7 +37,7 @@
 */
 #define	NUM_LED				2
 #define NUM_BTN				0
-#define	NUM_SWT				3
+#define	NUM_SWT				0
 #define NUM_SERVO			0
 
 /* Define the number of pins including extended i/o pins.
@@ -77,9 +77,9 @@
 
 /* No switches on this board.
 */
-#define PIN_SWT1	8
-#define PIN_SWT2	59
-#define PIN_SWT3	56
+// #define PIN_SWT1	8
+// #define PIN_SWT2	59
+// #define PIN_SWT3	56
 
 /* ------------------------------------------------------------ */
 /*					Pots and Monitor Declarations   			*/
@@ -540,6 +540,10 @@ extern int convertADC(uint8_t channelNumber);
 #define PIN_SPIFLASH_SS  16 //RC2 SS2
 
 #define	PIN_HEATER_EN   47 // RA4
+
+#define PIN_TM1650_DISP 73 //RC15
+#define PIN_TM1650_SCL  71 //RC13
+#define PIN_TM1650_SDA  72 //RC14
 
 #endif	// BOARD_DEFS_H
 

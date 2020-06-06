@@ -169,6 +169,10 @@ const uint8_t digital_pin_to_port_PGM[] = {
     _IOPORT_PG,         //  68  RG12    TRD1/SQID1/RG12                             (TRACE TRD1)
     _IOPORT_PG,         //  69  RG14    TRD2/SQID2/RG14                             (TRACE TRD2)
     _IOPORT_PA,         //  70  RA07    TRD3/SQID3/RA7                              (TRACE TRD3)
+
+    _IOPORT_PC,         //  71  RC13
+    _IOPORT_PC,         //  72  RC14
+    _IOPORT_PC,         //  73  RC15
 };
 
 /* ------------------------------------------------------------ */
@@ -260,6 +264,9 @@ const uint16_t digital_pin_to_bit_mask_PGM[] =
     _BV( 14 ),       //    69  RG14    TRD2/SQID2/RG14                             (TRACE TRD2)
     _BV( 7 ),        //    70  RA07    TRD3/SQID3/RA7                              (TRACE TRD3)
 
+    _BV( 13 ),       //    71  RC13
+    _BV( 14 ),       //    72  RC14
+    _BV( 15 ),       //    73  RC15
 };
 
 /* ------------------------------------------------------------ */
@@ -351,6 +358,10 @@ const uint16_t digital_pin_to_timer_PGM[] =
     NOT_ON_TIMER,               //    68  RG12    TRD1/SQID1/RG12                             (TRACE TRD1)
     NOT_ON_TIMER,               //    69  RG14    TRD2/SQID2/RG14                             (TRACE TRD2)
     NOT_ON_TIMER,               //    70  RA07    TRD3/SQID3/RA7                              (TRACE TRD3)
+
+    NOT_ON_TIMER,               //    71  RC13
+    NOT_ON_TIMER,               //    72  RC14
+    NOT_ON_TIMER,               //    73  RC15  
 };
 
 /* ------------------------------------------------------------ */
@@ -440,6 +451,10 @@ const uint8_t digital_pin_to_analog_PGM[] = {
     NOT_ANALOG_PIN,             //    68  RG12    TRD1/SQID1/RG12                             (TRACE TRD1)
     NOT_ANALOG_PIN,             //    69  RG14    TRD2/SQID2/RG14                             (TRACE TRD2)
     NOT_ANALOG_PIN,             //    70  RA07    TRD3/SQID3/RA7                              (TRACE TRD3)
+
+    NOT_ANALOG_PIN,             //    71  RC13
+    NOT_ANALOG_PIN,             //    72  RC14
+    NOT_ANALOG_PIN,             //    73  RC15
 };
 
 
@@ -554,6 +569,9 @@ const uint8_t digital_pin_to_pps_out_PGM[] = {
     NOT_PPS_PIN,                //  68  RG12    TRD1/SQID1/RG12                             (TRACE TRD1)
     NOT_PPS_PIN,                //  69  RG14    TRD2/SQID2/RG14                             (TRACE TRD2)
     NOT_PPS_PIN,                //  70  RA07    TRD3/SQID3/RA7                              (TRACE TRD3)
+    _PPS_OUT(_PPS_RPC13R),      //  71  RC13
+    _PPS_OUT(_PPS_RPC14R),      //  72  RC14
+    NOT_PPS_PIN,
  };
 
 /* ------------------------------------------------------------ */
@@ -639,6 +657,9 @@ const uint8_t digital_pin_to_pps_in_PGM[] = {
     NOT_PPS_PIN,                //  68  RG12    TRD1/SQID1/RG12                             (TRACE TRD1)
     NOT_PPS_PIN,                //  69  RG14    TRD2/SQID2/RG14                             (TRACE TRD2)
     NOT_PPS_PIN,                //  70  RA07    TRD3/SQID3/RA7                              (TRACE TRD3)
+    _PPS_IN(_PPS_RPC13),        //  71  RC13
+    _PPS_IN(_PPS_RPC14),        //  72  RC14
+    NOT_PPS_PIN,
 };
 
 /* ------------------------------------------------------------ */
