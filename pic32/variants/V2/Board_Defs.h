@@ -544,10 +544,10 @@ extern int convertADC(uint8_t channelNumber);
 #define	PIN_WOK_FAULT   69 // RG14
 #define	PIN_WOK_HOME1   68 // RG12
 
-#define	PIN_PLT_DIR     46 // RA5 32 // RE6
-#define	PIN_PLT_PUL     31 // RE5 46 // RA5
-#define	PIN_PLT_ENA     32 // RE6 31 // RE5
-#define	PIN_PLT_FAULT   33 // RE7 33 // RE7
+// #define	PIN_PLT_DIR     46 // RA5 32 // RE6
+// #define	PIN_PLT_PUL     31 // RE5 46 // RA5
+// #define	PIN_PLT_ENA     32 // RE6 31 // RE5
+// #define	PIN_PLT_FAULT   33 // RE7 33 // RE7
 #define	PIN_PLT_HOME1   52 // RC3
 #define	PIN_PLT_HOME2   45 // RG15
 
