@@ -399,7 +399,7 @@ void HardwareSerial::begin(unsigned long baudRate, uint8_t address) {
     uart->uxMode.set = 1 << _UARTMODE_ON; // enable UART module
 }
 
-//#if defined(__PIC32MZXX__)
+#if defined(__PIC32MZXX__)
 void HardwareSerial::beginasync(unsigned long baudRate, int dmarxchn, int dmatxchn, bool rx_continuous, bool rx_pattern_match, 
                                 uint16_t rxpattern, bool tx_continuous, bool tx_pattern_match, uint16_t txpattern){
 // #else
@@ -499,6 +499,7 @@ void HardwareSerial::beginasync(unsigned long baudRate, int dmarxchn, int dmatxc
     }
     uart->uxSta.reg  = (1 << _UARTSTA_UTXEN) + (1 << _UARTSTA_URXEN) + (1 << 14);    // enable transmitter and receiver    
 }
+#endif
 
 /* ------------------------------------------------------------ */
 /***	HardwareSerial::end

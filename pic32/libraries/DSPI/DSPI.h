@@ -122,7 +122,7 @@ private:
 	uint32_t			bitTx;		//transmit interrupt flag bit
 	volatile uint8_t *	pbSndCur;	//current point in transmit buffer
 	volatile uint8_t *	pbRcvCur;	//current point in receive buffer
-	volatile uint16_t	cbCur;		//count of bytes left to transfer
+	volatile uint16_t	cbCur;		//count of bytes left to transfer	
 	uint8_t				bPad;		//pad byte for some transfers
 	uint8_t				fRov;		//receive overflow error flag
 
@@ -135,6 +135,10 @@ private:
 
     uint32_t            storedBrg;      // Previous baud rate before a setSpeed
     uint32_t            storedMode;     // Previous mode before a setMode
+
+	uint8_t _dmatxchn=-1;
+	uint8_t _dmarxchn=-1;
+	uint8_t txonly=0;
 
 	void	doDspiInterrupt();
 
@@ -189,10 +193,28 @@ void		disableInterruptTransfer();
 void		intTransfer(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv);
 void		intTransfer(uint16_t cbReq, uint8_t * pbSnd);
 void		intTransfer(uint16_t cbReq, uint8_t bPadT, uint8_t * pbRcv);
+void		intTransfertimeout(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv, uint32_t timeout = 0);
+void		intTransfertimeout(uint16_t cbReq, uint8_t * pbSnd, uint32_t timeout = 0);
+void		intTransfertimeout(uint16_t cbReq, uint8_t bPadT, uint8_t * pbRcv, uint32_t timeout = 0);
 void		cancelIntTransfer();
-uint16_t	transCount() { return cbCur; };
-int			isOverflow() { return fRov; };
-void		clearOverflow() { fRov = 0; };
+uint16_t	transCount() { return cbCur; }
+void		settransCount(int cnt) {cbCur = cnt;}
+int			isOverflow();// { return fRov; };
+void		clearOverflow();
+int			intflag();
+int32_t		spistat();
+int			isTxOnly() { return txonly; }
+
+bool		beginasync();
+bool 		beginasync(uint8_t pin, uint8_t dma_rx=-1, uint8_t dma_tx = -1);
+void		asyncTransfer(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv);
+void		asyncTransfer(uint16_t cbReq, uint8_t * pbSnd);
+void		asyncTransfer(uint16_t cbReq, uint8_t bPadT, uint8_t * pbRcv);
+void		asyncTransfertimeout(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv, uint32_t timeout=0);
+void		asyncTransfertimeout(uint16_t cbReq, uint8_t * pbSnd, uint32_t timeout=0);
+void		asyncTransfertimeout(uint16_t cbReq, uint8_t bPadT, uint8_t * pbRcv, uint32_t timeout=0);
+
+
 };
 
 /* Object class for DSPI port 0

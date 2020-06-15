@@ -42,14 +42,20 @@
 /* ------------------------------------------------------------ */
 
 #define OPT_BOARD_INTERNAL
+#include 	<wiring.h>
 #include	<sys/attribs.h>
 #include	<DSPI.h>
+
+#include "plib_dmac.h"
 
 #if defined(_SPI1CON_ENHBUF_POSITION)
 #define ENH_BUFFER _SPI1CON_ENHBUF_POSITION
 #elif defined(_SPI1ACON_ENHBUF_POSITION)
 #define ENH_BUFFER _SPI1ACON_ENHBUF_POSITION
 #endif
+
+static void TransmitCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle);
+static void ReceiveCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle);
 
 /* ------------------------------------------------------------ */
 /*				Forward references to int handlers              */
@@ -295,6 +301,8 @@ bool DSPI::begin(uint8_t pinT) {
 
     // set up the interrupt handler 
     setIntVector(vec, isr);
+	//setIntVector(vec+1, isr);
+	//setIntVector(vec+2, isr);
 
 /* Initialize the pins. The pin directions for SDO, SDI and SCK
 	** are set automatically when the SPI controller is enabled. The
@@ -340,6 +348,13 @@ bool DSPI::begin(uint8_t pinT) {
 	pregIpc->clr = (0x1F << bnVec);
 	pregIpc->set = ipl << bnVec;
 
+#if defined(__PIC32MZXX__)
+	setIntVector(vec+1, isr);
+	setIntVector(vec+2, isr);
+	setIntPriority(vec+1, ((ipl >> 2)&0x03), (ipl&0x03));
+	setIntPriority(vec+2, ((ipl >> 2)&0x03), (ipl&0x03));
+#endif
+
 	/* Set the default baud rate.
 	*/
 	brg = (uint16_t)((__PIC32_pbClk / (2 * _DSPI_SPD_DEFAULT)) - 1);
@@ -356,6 +371,7 @@ bool DSPI::begin(uint8_t pinT) {
 	** the SS pin MUST be kept as OUTPUT.
 	*/
 	pspi->sxCon.reg = 0;
+	pspi->sxCon.clr = 1 << 4;
 	pspi->sxCon.set = (1 << _SPICON_ON) + (1 << _SPICON_MSTEN) + DSPI_MODE0;
 
     return(true);
@@ -385,7 +401,6 @@ DSPI::end() {
 	cbCur = 0;
 	clearIntVector(vec);	
 }
-
 /* ------------------------------------------------------------ */
 /***	DSPI::setSpeed
 **
@@ -875,6 +890,10 @@ DSPI::cancelIntTransfer() {
 void
 DSPI::intTransfer(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv) {
 
+	clearOverflow();
+	enableInterruptTransfer();
+	// uint8_t c = pspi->sxBuf.reg;
+	// (void)c;
 	/* Set up the control variables for the transfer.
 	*/
 	cbCur = cbReq;
@@ -913,6 +932,8 @@ DSPI::intTransfer(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv) {
 void
 DSPI::intTransfer(uint16_t cbReq, uint8_t * pbSnd) {
 
+	clearOverflow();
+	enableInterruptTransfer();
 	/* Set up the control variables for the transfer.
 	*/
 	cbCur = cbReq;
@@ -954,6 +975,8 @@ DSPI::intTransfer(uint16_t cbReq, uint8_t * pbSnd) {
 void
 DSPI::intTransfer(uint16_t cbReq, uint8_t bPadT, uint8_t * pbRcv) {
 
+	clearOverflow();
+	enableInterruptTransfer();
 	/* Set up the control variables for the transfer.
 	*/
 	cbCur = cbReq;
@@ -972,6 +995,53 @@ DSPI::intTransfer(uint16_t cbReq, uint8_t bPadT, uint8_t * pbRcv) {
 
 }
 
+void DSPI::intTransfertimeout(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv, uint32_t timeout){
+	intTransfer(cbReq, pbSnd, pbRcv);
+	int count = 0;
+	while (cbCur != 0){
+		if (++count > timeout){
+			return;
+		}
+		if (isOverflow()){
+			cancelIntTransfer();
+			//disableInterruptTransfer();
+			return;
+		}
+		delay(1);
+	}
+}
+
+void DSPI::intTransfertimeout(uint16_t cbReq, uint8_t * pbSnd, uint32_t timeout){
+	intTransfer(cbReq, pbSnd);
+	int count = 0;
+	while (cbCur != 0){
+		if (++count > timeout){
+			return;
+		}
+		if (isOverflow()){
+			cancelIntTransfer();
+			//disableInterruptTransfer();
+			return;
+		}
+		delay(1);
+	}
+}
+
+void DSPI::intTransfertimeout(uint16_t cbReq, uint8_t bPadT, uint8_t * pbRcv, uint32_t timeout){
+	intTransfer(cbReq, bPadT, pbRcv);
+	int count = 0;
+	while (cbCur != 0){
+		if (++count > timeout){
+			return;
+		}
+		if (isOverflow()){
+			cancelIntTransfer();
+			//disableInterruptTransfer();
+			return;
+		}
+		delay(1);
+	}
+}
 /* ------------------------------------------------------------ */
 /***	DSPI::doDspiInterrupt
 **
@@ -1006,37 +1076,227 @@ DSPI::doDspiInterrupt() {
 	if ((regIfs & bitErr) != 0) {
 		fRov = 1;				// set the receive overflow error flag;
 		pspi->sxStat.clr = (1 << _SPISTAT_SPIROV);	//clear status bit
+		bTmp = pspi->sxBuf.reg;		//read next byte from SPI controller
+		(void)bTmp;
 		pregIfs->clr = bitErr;
+
 	}
 
 	/* Check for and handle receive interrupt.
 	*/
 	if ((regIfs & bitRx) != 0) {
 
-		/* Get the received character.
-		*/
-		bTmp = pspi->sxBuf.reg;		//read next byte from SPI controller
-		cbCur -= 1;					//count this byte as received
+		//if (_dmarxchn == -1){
+			/* Get the received character.
+			*/
+			bTmp = pspi->sxBuf.reg;		//read next byte from SPI controller
+			// while ((pspi->sxStat.reg & (1 << _SPISTAT_SPIRBF)) != 0) {
+			// }
+			cbCur -= 1;					//count this byte as received
 
-		/* Are we storing it? pbRcvCur is 0 if we are sending only
-		** and ignoring the received data.
-		*/
-		if (pbRcvCur != 0) {
-			*pbRcvCur++ = bTmp;		//store the received byte into output buffer
-		}
+			/* Are we storing it? pbRcvCur is 0 if we are sending only
+			** and ignoring the received data.
+			*/
+			if (pbRcvCur != 0) {
+				*pbRcvCur++ = bTmp;		//store the received byte into output buffer
+			}
+		//}
 
 		/* Send the next byte to the slave. pbSndCur is 0 if we are
 		** receiving only. In this case send the pad byte.
 		*/
-		if (cbCur > 0) {
-			bTmp = (pbSndCur != 0) ? *pbSndCur++ : bPad;
-			pspi->sxBuf.reg = bTmp;
-		}
+		//if (_dmatxchn == -1){
+			if (cbCur > 0) {
+				bTmp = (pbSndCur != 0) ? *pbSndCur++ : bPad;
+				// while ((pspi->sxStat.reg & (1 << _SPISTAT_SPITBE)) == 0) {
+				// }
+				pspi->sxBuf.reg = bTmp;
+			}
+		//}
 
 		pregIfs->clr = bitRx;		//clear the receive interrupt flag
 
 	}
 
+}
+
+bool DSPI::beginasync(){
+	return (beginasync(pinSS));
+}
+
+bool DSPI::beginasync(uint8_t pin, uint8_t dma_rx, uint8_t dma_tx){
+	if (!begin(pin)){
+		return false;
+	}
+	//enableInterruptTransfer();
+	if (dma_rx != -1){
+		_dmarxchn = dma_rx;
+		DMAC_Initialize((DMAC_CHANNEL) dma_rx, vec+1, false, false, 0);
+		DMAC_ChannelCallbackRegister((DMAC_CHANNEL) dma_rx, ReceiveCompleteCallback, (uintptr_t) this);
+	}
+	if (dma_tx != -1){
+		_dmatxchn = dma_tx;
+		DMAC_Initialize((DMAC_CHANNEL) dma_tx, vec+1, false, false, 0);
+		DMAC_ChannelCallbackRegister((DMAC_CHANNEL) dma_tx, TransmitCompleteCallback, (uintptr_t) this);
+	}
+	return true;
+}
+
+void DSPI::asyncTransfer(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv){
+	clearOverflow();
+#if defined(__PIC32MZXX__)
+	//disableInterruptTransfer();
+	//enableInterruptTransfer();
+	cbCur = cbReq;
+	txonly = 0;
+	pspi->sxCon.clr = (1 << 4);
+	pspi->sxCon.clr = (1 << 12);
+	delayMicroseconds(1);
+	DMAC_ChannelTransfer((DMAC_CHANNEL) _dmarxchn, (const void *)&(pspi->sxBuf.reg), 1, (const void *)pbRcv, cbReq, 1);
+	DMAC_ChannelTransfer((DMAC_CHANNEL) _dmatxchn, (const void *)pbSnd, cbReq, (const void *) &(pspi->sxBuf.reg), 1, 1);
+	DMAC_ChannelForceStart((DMAC_CHANNEL)_dmatxchn);
+#else	
+	enableInterruptTransfer();
+	intTransfer(cbReq, pbSnd, pbRcv);
+#endif
+}
+
+void DSPI::asyncTransfer(uint16_t cbReq, uint8_t * pbSnd){
+	clearOverflow();
+#if defined(__PIC32MZXX__)
+	//disableInterruptTransfer();
+	//enableInterruptTransfer();
+	cbCur = cbReq;
+	txonly = 1;
+	pspi->sxCon.set = (1 << 4);
+	pspi->sxCon.clr = (1 << 12);
+	delayMicroseconds(1);
+	//DMAC_ChannelTransfer((DMAC_CHANNEL) _dmarxchn, (const void *)&(pspi->sxBuf.reg), 1, (const void *)pbRcv, cbReq, 1);
+	DMAC_ChannelTransfer((DMAC_CHANNEL) _dmatxchn, (const void *)pbSnd, cbReq, (const void *) &(pspi->sxBuf.reg), 1, 1);
+	DMAC_ChannelForceStart((DMAC_CHANNEL)_dmatxchn);
+#else	
+	enableInterruptTransfer();
+	intTransfer(cbReq, pbSnd);
+#endif
+}
+
+void DSPI::asyncTransfer(uint16_t cbReq, uint8_t bPadT, uint8_t * pbRcv){
+	clearOverflow();
+#if defined(__PIC32MZXX__)
+	//disableInterruptTransfer();
+	//enableInterruptTransfer();
+	cbCur = cbReq;
+	txonly = 0;
+	pspi->sxCon.clr = (1 << 4);
+	pspi->sxCon.set = (1 << 12);
+	delayMicroseconds(1);
+	uint8_t * pbSnd = pbRcv;
+	DMAC_ChannelTransfer((DMAC_CHANNEL) _dmarxchn, (const void *)&(pspi->sxBuf.reg), 1, (const void *)pbRcv, cbReq, 1);
+	DMAC_ChannelTransfer((DMAC_CHANNEL) _dmatxchn, (const void *)pbSnd, cbReq, (const void *) &(pspi->sxBuf.reg), 1, 1);
+	DMAC_ChannelForceStart((DMAC_CHANNEL)_dmatxchn);
+#else	
+	enableInterruptTransfer();
+	intTransfer(cbReq, bPadT, pbRcv);
+#endif
+}
+
+void DSPI::asyncTransfertimeout(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv, uint32_t timeout){
+// 	clearOverflow();
+// #if defined(__PIC32MZXX__)
+// 	disableInterruptTransfer();
+// 	cbCur = cbReq;
+// 	DMAC_ChannelTransfer((DMAC_CHANNEL) _dmatxchn, (const void *)pbSnd, cbReq, (const void *) &(pspi->sxBuf.reg), 1, 1);
+// 	DMAC_ChannelTransfer((DMAC_CHANNEL) _dmarxchn, (const void *)&(pspi->sxBuf.reg), cbReq, (const void *)pbRcv, 1, 1);
+// 	DMAC_ChannelForceStart((DMAC_CHANNEL)_dmatxchn);
+// #else	
+// 	enableInterruptTransfer();
+// 	intTransfer(cbReq, pbSnd, pbRcv);
+// #endif
+	asyncTransfer(cbReq, pbSnd, pbRcv);
+	int count = 0;
+	while (cbCur != 0){
+		if (++count > timeout){
+			return;
+		}
+		if (isOverflow()){
+			//disableInterruptTransfer();
+			return;
+		}
+		delay(1);
+	}
+	//disableInterruptTransfer();
+}
+
+void DSPI::asyncTransfertimeout(uint16_t cbReq, uint8_t * pbSnd, uint32_t timeout){
+	clearOverflow();
+	asyncTransfer(cbReq, pbSnd);
+	int count = 0;
+	while (cbCur != 0){
+		if (++count > timeout){
+			return;
+		}
+		if (isOverflow()){
+			//disableInterruptTransfer();
+			return;
+		}
+		delay(1);
+	}
+	//disableInterruptTransfer();
+}
+
+void DSPI::asyncTransfertimeout(uint16_t cbReq, uint8_t bPadT, uint8_t * pbRcv, uint32_t timeout){
+	clearOverflow();
+	asyncTransfer(cbReq, bPadT, pbRcv);
+	int count = 0;
+	while (cbCur != 0){
+		if (++count > timeout){
+			return;
+		}
+		if (isOverflow()){
+			//disableInterruptTransfer();
+			return;
+		}
+		delay(1);
+	}
+	//disableInterruptTransfer();
+}
+
+int DSPI::intflag(){
+	return pregIfs->reg;
+}
+
+int32_t DSPI::spistat(){
+	return pspi->sxStat.reg;
+}
+
+int DSPI::isOverflow(){
+	//return pspi->sxStat.reg;
+	return fRov;
+}
+
+void DSPI::clearOverflow() { 
+	fRov = 0; 
+	pspi->sxStat.clr = 1<<6;
+}
+
+static void ReceiveCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle){
+    DSPI * h = (DSPI *) contextHandle;
+	(void) h;
+    // if (h->asyncrxIntr != NULL){
+    //     h->asyncrxIntr();
+    // }
+	h->settransCount(0);// = 0;
+}
+
+static void TransmitCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle){
+    DSPI * h = (DSPI *) contextHandle;
+    (void) h;
+	// if (h->asynctxIntr != NULL){
+    //     h->asynctxIntr();
+    // }
+	if (h->isTxOnly()){
+		h->settransCount(0);
+	}
 }
 
 /* ------------------------------------------------------------ */
