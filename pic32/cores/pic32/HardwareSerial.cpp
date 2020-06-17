@@ -763,16 +763,20 @@ HardwareSerial::operator int() {
 
 static void ReceiveCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle){
     HardwareSerial * h = (HardwareSerial *) contextHandle;
+    h->clearrxInterruptflag();
     if (h->asyncrxIntr != NULL){
         h->asyncrxIntr();
     }
+    ifs->clr = bit_rx;	//clear all interrupt flags
 }
 
 static void TransmitCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle){
     HardwareSerial * h = (HardwareSerial *) contextHandle;
+    h->cleartxInterruptflag();
     if (h->asynctxIntr != NULL){
         h->asynctxIntr();
     }
+    
 }
 
 /* ------------------------------------------------------------ */

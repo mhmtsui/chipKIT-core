@@ -128,7 +128,8 @@ class HardwareSerial : public Stream
         void            attachasyncrxInterrupt(void (*callback)(void));
         void            (*asynctxIntr)(void);
         void            (*asyncrxIntr)(void);
-        
+        void            cleartxInterruptflag(void){ ifs->clr = bit_tx;}
+        void            clearrxInterruptflag(void){ ifs->clr = bit_rx;}
         void            detachInterrupt();
         
         void            enableAddressDetection (void);
