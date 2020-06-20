@@ -137,7 +137,10 @@ typedef void (*DMAC_CHANNEL_CALLBACK) (DMAC_TRANSFER_EVENT status, uintptr_t con
 */
 typedef struct
 {
+    bool interrupt;
     bool inUse;
+
+    DMAC_TRANSFER_EVENT dmaEvent;
 
     /* Inidcates the error information for
        the last DMA operation on this channel */
@@ -298,6 +301,8 @@ void DMAC_ChannelDisable (DMAC_CHANNEL channel);
 */
 bool DMAC_ChannelIsBusy (DMAC_CHANNEL channel);
 
+bool DMAC_ChannelIsError (DMAC_CHANNEL channel);
+
 // // *****************************************************************************
 // /* Function:
 //    void DMAC_Initialize( void )
@@ -321,7 +326,7 @@ bool DMAC_ChannelIsBusy (DMAC_CHANNEL channel);
 // */
 // void DMAC_Initialize( void );
 //#if defined(__PIC32MZXX__)
-void DMAC_Initialize(DMAC_CHANNEL chn, uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern);
+void DMAC_Initialize(DMAC_CHANNEL chn, uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern, bool interrupt);
 //#else
 //void DMAC_Initialize(DMAC_CHANNEL chn, uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern);
 //#endif

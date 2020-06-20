@@ -292,11 +292,11 @@ static void DMAC_ChannelSetAddresses( DMAC_CHANNEL channel, const void *srcAddr,
   Returns:
     void
 */
-#if defined(__PIC32MZXX__)
-void DMA0_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern){
-#else
-void DMA0_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
-#endif
+//#if defined(__PIC32MZXX__)
+void DMA0_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern, bool interrupt){
+//#else
+//void DMA0_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
+//#endif
     DMAC_CHANNEL_OBJECT *chanObj;
 
     /* Enable the DMA module */
@@ -304,7 +304,7 @@ void DMA0_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
 
     /* Initialize the available channel objects */
     chanObj             =   (DMAC_CHANNEL_OBJECT *)&gDMAChannelObj[0];
-
+    chanObj->interrupt      =    interrupt;
     chanObj->inUse          =    false;
     chanObj->pEventCallBack =    NULL;
     chanObj->hClientArg     =    0;
@@ -329,6 +329,8 @@ void DMA0_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
       DMAChnSetMatchPattern(DMAC_CHANNEL_0, pattern);
     }
 
+
+    if (interrupt){
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH0INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
@@ -337,6 +339,7 @@ void DMA0_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
 
     /* Enable DMA channel interrupts */
     IEC4SET |= 0x40;
+    }
 }
 
 /* Function:
@@ -354,11 +357,11 @@ void DMA0_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
   Returns:
     void
 */
-#if defined(__PIC32MZXX__)
-void DMA1_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern){
-#else
-void DMA1_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
-#endif
+//#if defined(__PIC32MZXX__)
+void DMA1_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern, bool interrupt){
+//#else
+//void DMA1_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
+//#endif
     DMAC_CHANNEL_OBJECT *chanObj;
 
     /* Enable the DMA module */
@@ -366,7 +369,7 @@ void DMA1_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
 
     /* Initialize the available channel objects */
     chanObj             =   (DMAC_CHANNEL_OBJECT *)&gDMAChannelObj[1];
-
+    chanObj->interrupt      =    interrupt;
     chanObj->inUse          =    false;
     chanObj->pEventCallBack =    NULL;
     chanObj->hClientArg     =    0;
@@ -391,6 +394,7 @@ void DMA1_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
       DMAChnSetMatchPattern(DMAC_CHANNEL_1, pattern);
     }
 
+    if (interrupt){
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH1INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
@@ -398,6 +402,7 @@ void DMA1_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
     setIntVector(_DMA1_VECTOR, DMA1_Handler);
     /* Enable DMA channel interrupts */
     IEC4SET |= 0x80;
+    }
 }
 
 /* Function:
@@ -415,11 +420,11 @@ void DMA1_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
   Returns:
     void
 */
-#if defined(__PIC32MZXX__)
-void DMA2_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern){
-#else
-void DMA2_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
-#endif
+//#if defined(__PIC32MZXX__)
+void DMA2_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern, bool interrupt){
+//#else
+//void DMA2_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
+//#endif
     DMAC_CHANNEL_OBJECT *chanObj;
 
     /* Enable the DMA module */
@@ -427,7 +432,7 @@ void DMA2_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
 
     /* Initialize the available channel objects */
     chanObj             =   (DMAC_CHANNEL_OBJECT *)&gDMAChannelObj[2];
-
+    chanObj->interrupt      =    interrupt;
     chanObj->inUse          =    false;
     chanObj->pEventCallBack =    NULL;
     chanObj->hClientArg     =    0;
@@ -451,7 +456,7 @@ void DMA2_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
     if (pattern_match){
       DMAChnSetMatchPattern(DMAC_CHANNEL_2, pattern);
     }
-
+    if (interrupt){
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH2INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
@@ -459,6 +464,7 @@ void DMA2_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
     setIntVector(_DMA2_VECTOR, DMA2_Handler);
     /* Enable DMA channel interrupts */
     IEC4SET |= 0x100;
+    }
 }
 
 /* Function:
@@ -476,11 +482,11 @@ void DMA2_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
   Returns:
     void
 */
-#if defined(__PIC32MZXX__)
-void DMA3_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern){
-#else
-void DMA3_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
-#endif
+//#if defined(__PIC32MZXX__)
+void DMA3_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern, bool interrupt){
+//#else
+//void DMA3_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
+//#endif
     DMAC_CHANNEL_OBJECT *chanObj;
 
     /* Enable the DMA module */
@@ -488,7 +494,7 @@ void DMA3_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
 
     /* Initialize the available channel objects */
     chanObj             =   (DMAC_CHANNEL_OBJECT *)&gDMAChannelObj[3];
-
+    chanObj->interrupt      =    interrupt;
     chanObj->inUse          =    false;
     chanObj->pEventCallBack =    NULL;
     chanObj->hClientArg     =    0;
@@ -513,6 +519,7 @@ void DMA3_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
       DMAChnSetMatchPattern(DMAC_CHANNEL_3, pattern);
     }
 
+    if (interrupt){
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH3INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
@@ -520,6 +527,7 @@ void DMA3_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
     setIntVector(_DMA3_VECTOR, DMA3_Handler);
     /* Enable DMA channel interrupts */
     IEC4SET |= 0x200;
+    }
 }
 
 
@@ -538,11 +546,11 @@ void DMA3_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
   Returns:
     void
 */
-#if defined(__PIC32MZXX__)
-void DMA4_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern){
-#else
-void DMA4_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
-#endif
+//#if defined(__PIC32MZXX__)
+void DMA4_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern, bool interrupt){
+//#else
+//void DMA4_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
+//#endif
     DMAC_CHANNEL_OBJECT *chanObj;
 
     /* Enable the DMA module */
@@ -550,7 +558,7 @@ void DMA4_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
 
     /* Initialize the available channel objects */
     chanObj             =   (DMAC_CHANNEL_OBJECT *)&gDMAChannelObj[4];
-
+    chanObj->interrupt      =    interrupt;
     chanObj->inUse          =    false;
     chanObj->pEventCallBack =    NULL;
     chanObj->hClientArg     =    0;
@@ -564,7 +572,7 @@ void DMA4_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
     /* DMA channel-level control registers.  They will have additional settings made when starting a transfer. */
     /* DMA channel 4 configuration */
     /* CHPRI = 0 */
-    DCH4CON = 0x3;
+    DCH4CON = 0x1;
     if (continuous){
       DCH4CON |= (0x10 | (1<<11));
     }
@@ -575,13 +583,15 @@ void DMA4_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
       DMAChnSetMatchPattern(DMAC_CHANNEL_4, pattern);
     }
 
+    if (interrupt){
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH4INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
-    IPC34SET = 0x110000 | 0x0;  /* DMA4:  Priority 2 / Subpriority 0 */    
+    IPC34SET = 0x10000 | 0x1100;  /* DMA4:  Priority 2 / Subpriority 0 */    
     setIntVector(_DMA4_VECTOR, DMA4_Handler);
     /* Enable DMA channel interrupts */
     IEC4SET |= 0x400;
+    }
 }
 
 /* Function:
@@ -599,11 +609,11 @@ void DMA4_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
   Returns:
     void
 */
-#if defined(__PIC32MZXX__)
-void DMA5_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern){
-#else
-void DMA5_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
-#endif
+//#if defined(__PIC32MZXX__)
+void DMA5_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern, bool interrupt){
+//#else
+//void DMA5_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
+//#endif
     DMAC_CHANNEL_OBJECT *chanObj;
 
     /* Enable the DMA module */
@@ -611,7 +621,7 @@ void DMA5_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
 
     /* Initialize the available channel objects */
     chanObj             =   (DMAC_CHANNEL_OBJECT *)&gDMAChannelObj[5];
-
+    chanObj->interrupt      =    interrupt;
     chanObj->inUse          =    false;
     chanObj->pEventCallBack =    NULL;
     chanObj->hClientArg     =    0;
@@ -625,7 +635,7 @@ void DMA5_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
     /* DMA channel-level control registers.  They will have additional settings made when starting a transfer. */
     /* DMA channel 5 configuration */
     /* CHPRI = 0 */
-    DCH5CON = 0x2;
+    DCH5CON = 0x0;
     if (continuous){
       DCH5CON |= (0x10 | (1<<11));
     }
@@ -636,13 +646,15 @@ void DMA5_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
       DMAChnSetMatchPattern(DMAC_CHANNEL_5, pattern);
     }
 
+    if (interrupt){
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH5INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
-    IPC34SET = 0x11000000 | 0x0;  /* DMA5:  Priority 2 / Subpriority 0 */     
+    IPC34SET = 0x10000000 | 0x110000;  /* DMA5:  Priority 2 / Subpriority 0 */     
     setIntVector(_DMA5_VECTOR, DMA5_Handler);
     /* Enable DMA channel interrupts */
     IEC4SET |= 0x800;
+    }
 }
 
 /* Function:
@@ -660,11 +672,11 @@ void DMA5_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
   Returns:
     void
 */
-#if defined(__PIC32MZXX__)
-void DMA6_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern){
-#else
-void DMA6_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
-#endif
+//#if defined(__PIC32MZXX__)
+void DMA6_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern, bool interrupt){
+//#else
+//void DMA6_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
+//#endif
     DMAC_CHANNEL_OBJECT *chanObj;
 
     /* Enable the DMA module */
@@ -672,7 +684,7 @@ void DMA6_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
 
     /* Initialize the available channel objects */
     chanObj             =   (DMAC_CHANNEL_OBJECT *)&gDMAChannelObj[6];
-
+    chanObj->interrupt      =    interrupt;
     chanObj->inUse          =    false;
     chanObj->pEventCallBack =    NULL;
     chanObj->hClientArg     =    0;
@@ -697,6 +709,7 @@ void DMA6_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
       DMAChnSetMatchPattern(DMAC_CHANNEL_6, pattern);
     }
 
+    if (interrupt){
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH6INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
@@ -704,6 +717,7 @@ void DMA6_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
     setIntVector(_DMA6_VECTOR, DMA6_Handler);
     /* Enable DMA channel interrupts */
     IEC4SET |= 0x1000;
+    }
 }
 
 /* Function:
@@ -721,11 +735,11 @@ void DMA6_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
   Returns:
     void
 */
-#if defined(__PIC32MZXX__)
-void DMA7_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern){
-#else
-void DMA7_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
-#endif
+//#if defined(__PIC32MZXX__)
+void DMA7_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern, bool interrupt){
+//#else
+//void DMA7_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
+//#endif
     DMAC_CHANNEL_OBJECT *chanObj;
 
     /* Enable the DMA module */
@@ -733,7 +747,7 @@ void DMA7_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
 
     /* Initialize the available channel objects */
     chanObj             =   (DMAC_CHANNEL_OBJECT *)&gDMAChannelObj[7];
-
+    chanObj->interrupt      =    interrupt;
     chanObj->inUse          =    false;
     chanObj->pEventCallBack =    NULL;
     chanObj->hClientArg     =    0;
@@ -759,6 +773,7 @@ void DMA7_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
       DMAChnSetMatchPattern(DMAC_CHANNEL_7, pattern);
     }
 
+    if (interrupt){
     /* CHBCIE = 1, CHTAIE=1, CHERIE=1 */
     DCH7INT = 0xB0000;
     /* Set up priority / subpriority of enabled interrupts */
@@ -766,37 +781,39 @@ void DMA7_Initialize(uint8_t vec, bool continuous, bool pattern_match, uint8_t p
     setIntVector(_DMA7_VECTOR, DMA7_Handler);
     /* Enable DMA channel interrupts */
     IEC4SET |= 0x2000;
+    }
+
 }
 
-#if defined(__PIC32MZXX__)
-void DMAC_Initialize(DMAC_CHANNEL chn, uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern){
-#else
-void DMAC_Initialize(DMAC_CHANNEL chn, uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
-#endif
+//#if defined(__PIC32MZXX__)
+void DMAC_Initialize(DMAC_CHANNEL chn, uint8_t vec, bool continuous, bool pattern_match, uint16_t pattern, bool interrupt){
+//#else
+//void DMAC_Initialize(DMAC_CHANNEL chn, uint8_t vec, bool continuous, bool pattern_match, uint8_t pattern){
+//#endif
   switch (chn){
     case DMAC_CHANNEL_0:
-      DMA0_Initialize(vec, continuous, pattern_match, pattern);
+      DMA0_Initialize(vec, continuous, pattern_match, pattern, interrupt);
     break;
     case DMAC_CHANNEL_1:
-      DMA1_Initialize(vec, continuous, pattern_match, pattern);    
+      DMA1_Initialize(vec, continuous, pattern_match, pattern, interrupt);    
     break;
     case DMAC_CHANNEL_2:
-      DMA2_Initialize(vec, continuous, pattern_match, pattern);    
+      DMA2_Initialize(vec, continuous, pattern_match, pattern, interrupt);    
     break;
     case DMAC_CHANNEL_3:
-      DMA3_Initialize(vec, continuous, pattern_match, pattern);    
+      DMA3_Initialize(vec, continuous, pattern_match, pattern, interrupt);    
     break;
     case DMAC_CHANNEL_4:
-      DMA4_Initialize(vec, continuous, pattern_match, pattern);    
+      DMA4_Initialize(vec, continuous, pattern_match, pattern, interrupt);    
     break;
     case DMAC_CHANNEL_5:
-      DMA5_Initialize(vec, continuous, pattern_match, pattern);    
+      DMA5_Initialize(vec, continuous, pattern_match, pattern, interrupt);    
     break;
     case DMAC_CHANNEL_6:
-      DMA6_Initialize(vec, continuous, pattern_match, pattern);
+      DMA6_Initialize(vec, continuous, pattern_match, pattern, interrupt);
     break;
     case DMAC_CHANNEL_7:
-      DMA7_Initialize(vec, continuous, pattern_match, pattern);    
+      DMA7_Initialize(vec, continuous, pattern_match, pattern, interrupt);    
     break;            
   }
 }
@@ -1048,11 +1065,18 @@ void DMAC_ChannelDisable (DMAC_CHANNEL channel)
     {
         /* Disable channel in register DCHxCON */
         /* CHEN = 0 */
-        regs = (volatile uint32_t *)(_DMAC_BASE_ADDRESS + 0x60 + (channel * 0xC0) + 0x0)+1;
+        regs = (volatile uint32_t *)(_DMAC_BASE_ADDRESS + 0x60 + (channel * 0xC0) + 0x0);
         *(volatile uint32_t *)(regs) = _DCH0CON_CHEN_MASK;
 
-        gDMAChannelObj[channel].inUse = false;
-
+        if (!(gDMAChannelObj[channel].interrupt)){
+          regs = (volatile uint32_t *)(_DMAC_BASE_ADDRESS + 0x60 + (channel * 0xC0) + 0x20);
+          if ((*(volatile uint32_t *) (regs))&(_DCH0INT_CHBCIF_MASK)){
+            (*(volatile uint32_t *) (regs)) &= (~(_DCH0INT_CHBCIF_MASK));
+          }
+            gDMAChannelObj[channel].inUse = false;
+        }else{
+          gDMAChannelObj[channel].inUse = false;
+        }
     }
 }
 
@@ -1075,9 +1099,36 @@ void DMAC_ChannelDisable (DMAC_CHANNEL channel)
 */
 bool DMAC_ChannelIsBusy (DMAC_CHANNEL channel)
 {
+    if (!(gDMAChannelObj[channel].interrupt)){
+      volatile uint32_t * regs;
+      regs = (volatile uint32_t *)(_DMAC_BASE_ADDRESS + 0x60 + (channel * 0xC0) + 0x20);
+      if ((*(volatile uint32_t *) (regs))&(_DCH0INT_CHBCIF_MASK)){
+        (*(volatile uint32_t *) (regs)) &= (~(_DCH0INT_CHBCIF_MASK));
+        gDMAChannelObj[channel].inUse = false;
+      }else{
+        gDMAChannelObj[channel].inUse = true;
+      }
+    }
     return (gDMAChannelObj[channel].inUse);
-
 }
+
+bool DMAC_ChannelIsError (DMAC_CHANNEL channel)
+{
+  if (!(gDMAChannelObj[channel].interrupt)){
+    volatile uint32_t * regs;
+    regs = (volatile uint32_t *)(_DMAC_BASE_ADDRESS + 0x60 + (channel * 0xC0) + 0x20);
+    if ((*(volatile uint32_t *) (regs))&(_DCH0INT_CHTAIF_MASK)){
+      gDMAChannelObj[channel].dmaEvent = DMAC_TRANSFER_EVENT_ERROR;
+      (*(volatile uint32_t *) (regs)) &= (~(_DCH0INT_CHTAIF_MASK));
+    }else if ((*(volatile uint32_t *) (regs))&(_DCH0INT_CHERIF_MASK)){
+      gDMAChannelObj[channel].errorInfo = DMAC_ERROR_ADDRESS_ERROR;
+      gDMAChannelObj[channel].dmaEvent = DMAC_TRANSFER_EVENT_ERROR;
+      (*(volatile uint32_t *) (regs)) &= (~(_DCH0INT_CHERIF_MASK));
+    }
+  }
+  return (gDMAChannelObj[channel].dmaEvent == DMAC_TRANSFER_EVENT_ERROR);
+}
+
 
 
 // *****************************************************************************
@@ -1139,7 +1190,7 @@ void DMA0_InterruptHandler (void)
     }
 
     chanObj->inUse = false;
-
+    chanObj->dmaEvent = dmaEvent;
     IFS4CLR = 0x40;
 
     /* Clear the interrupt flag and call event handler */
@@ -1209,7 +1260,7 @@ void DMA1_InterruptHandler (void)
     }
 
     chanObj->inUse = false;
-
+    chanObj->dmaEvent = dmaEvent;
     IFS4CLR = 0x80;
 
     /* Clear the interrupt flag and call event handler */
@@ -1279,7 +1330,7 @@ void DMA2_InterruptHandler (void)
     }
 
     chanObj->inUse = false;
-
+    chanObj->dmaEvent = dmaEvent;
     IFS4CLR = 0x100;
 
     /* Clear the interrupt flag and call event handler */
@@ -1349,7 +1400,7 @@ void DMA3_InterruptHandler (void)
     }
 
     chanObj->inUse = false;
-
+    chanObj->dmaEvent = dmaEvent;
     IFS4CLR = 0x200;
 
     /* Clear the interrupt flag and call event handler */
@@ -1386,7 +1437,7 @@ void DMA4_InterruptHandler (void)
     chanObj = (DMAC_CHANNEL_OBJECT *) &gDMAChannelObj[4];
 
     /* Check whether the active DMA channel event has occurred */
-    retVal = DCH4INTbits.CHBCIF;
+    retVal = DCH4INTbits.CHBCIF;// | DCH4INTbits.CHSDIF | DCH4INTbits.CHDDIF ;
 
     if(true == retVal) /* irq due to transfer complete */
     {
@@ -1419,7 +1470,7 @@ void DMA4_InterruptHandler (void)
     }
 
     chanObj->inUse = false;
-
+    chanObj->dmaEvent = dmaEvent;
     IFS4CLR = 0x400;
 
     /* Clear the interrupt flag and call event handler */
@@ -1456,7 +1507,7 @@ void DMA5_InterruptHandler (void)
     chanObj = (DMAC_CHANNEL_OBJECT *) &gDMAChannelObj[5];
 
     /* Check whether the active DMA channel event has occurred */
-    retVal = DCH5INTbits.CHBCIF;
+    retVal = DCH5INTbits.CHBCIF;// | DCH5INTbits.CHSDIF | DCH5INTbits.CHDDIF;
 
     if(true == retVal) /* irq due to transfer complete */
     {
@@ -1489,7 +1540,7 @@ void DMA5_InterruptHandler (void)
     }
 
     chanObj->inUse = false;
-
+    chanObj->dmaEvent = dmaEvent;
     IFS4CLR = 0x800;
 
     /* Clear the interrupt flag and call event handler */
@@ -1559,7 +1610,7 @@ void DMA6_InterruptHandler (void)
     }
 
     chanObj->inUse = false;
-
+    chanObj->dmaEvent = dmaEvent;
     IFS4CLR = 0x1000;
 
     /* Clear the interrupt flag and call event handler */
@@ -1629,7 +1680,7 @@ void DMA7_InterruptHandler (void)
     }
 
     chanObj->inUse = false;
-
+    chanObj->dmaEvent = dmaEvent;
     IFS4CLR = 0x2000;
 
     /* Clear the interrupt flag and call event handler */

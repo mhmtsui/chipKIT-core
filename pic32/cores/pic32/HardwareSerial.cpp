@@ -467,12 +467,12 @@ void HardwareSerial::beginasync(unsigned long baudRate, int dmarxchn, int dmatxc
 #endif
     _dmarxchn = dmarxchn;
     if (_dmarxchn != -1){
-        DMAC_Initialize((DMAC_CHANNEL) _dmarxchn, vec+1, rx_continuous, rx_pattern_match, rxpattern);
+        DMAC_Initialize((DMAC_CHANNEL) _dmarxchn, vec+1, rx_continuous, rx_pattern_match, rxpattern, true);
         DMAC_ChannelCallbackRegister((DMAC_CHANNEL)_dmarxchn, ReceiveCompleteCallback, (uintptr_t) this);
     }
     _dmatxchn = dmatxchn;
     if (_dmatxchn != -1){
-        DMAC_Initialize((DMAC_CHANNEL)_dmatxchn, vec+2, tx_continuous, tx_pattern_match, txpattern);
+        DMAC_Initialize((DMAC_CHANNEL)_dmatxchn, vec+2, tx_continuous, tx_pattern_match, txpattern, true);
         DMAC_ChannelCallbackRegister((DMAC_CHANNEL)_dmatxchn, TransmitCompleteCallback, (uintptr_t) this);
     }
 	/* Clear the interrupt flags, and set the interrupt enables for the
@@ -767,7 +767,7 @@ static void ReceiveCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t context
     if (h->asyncrxIntr != NULL){
         h->asyncrxIntr();
     }
-    ifs->clr = bit_rx;	//clear all interrupt flags
+    //ifs->clr = bit_rx;	//clear all interrupt flags
 }
 
 static void TransmitCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle){
@@ -776,7 +776,6 @@ static void TransmitCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contex
     if (h->asynctxIntr != NULL){
         h->asynctxIntr();
     }
-    
 }
 
 /* ------------------------------------------------------------ */
