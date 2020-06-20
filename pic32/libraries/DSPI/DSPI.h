@@ -204,16 +204,18 @@ void		clearOverflow();
 int			intflag();
 int32_t		spistat();
 int			isTxOnly() { return txonly; }
-
+void		clearTxInterrupt();
+void		clearRxInterrupt();
+#if defined(__PIC32MZXX__)
 bool		beginasync();
 bool 		beginasync(uint8_t pin, uint8_t dma_rx=-1, uint8_t dma_tx = -1);
-void		asyncTransfer(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv);
-void		asyncTransfer(uint16_t cbReq, uint8_t * pbSnd);
-void		asyncTransfer(uint16_t cbReq, uint8_t bPadT, uint8_t * pbRcv);
+bool		asyncTransfer(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv);
+bool		asyncTransfer(uint8_t pbSnd);
+bool		asyncTransfer(uint16_t cbReq, uint8_t bPadT, uint8_t * pbRcv);
 void		asyncTransfertimeout(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv, uint32_t timeout=0);
-void		asyncTransfertimeout(uint16_t cbReq, uint8_t * pbSnd, uint32_t timeout=0);
+void		asyncTransfertimeout(uint8_t pbSnd, uint32_t timeout=0);
 void		asyncTransfertimeout(uint16_t cbReq, uint8_t bPadT, uint8_t * pbRcv, uint32_t timeout=0);
-
+#endif
 
 };
 
