@@ -1124,7 +1124,7 @@ bool DSPI::beginasync(){
 	return (beginasync(pinSS));
 }
 
-bool DSPI::beginasync(uint8_t pin, uint8_t dma_rx, uint8_t dma_tx){
+bool DSPI::beginasync(uint8_t pin, int dma_rx, int dma_tx){
 	if (!begin(pin)){
 		return false;
 	}

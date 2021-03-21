@@ -108,8 +108,8 @@ class HardwareSerial : public Stream
 		uint32_t		bit_rx;		//rx interrupt flag bit
 		uint32_t		bit_tx;		//tx interrupt flag bit
 		ring_buffer		rx_buffer;	//queue used for UART rx data
-                uint8_t    _dmatxchn;
-                uint8_t    _dmarxchn;
+                int    _dmatxchn;
+                int    _dmarxchn;
         void            (*rxIntr)(int); // Interrupt callback routine
         void            (*txIntr)(void); //Interrupt callback routine
 

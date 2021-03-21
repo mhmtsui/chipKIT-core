@@ -136,8 +136,8 @@ private:
     uint32_t            storedBrg;      // Previous baud rate before a setSpeed
     uint32_t            storedMode;     // Previous mode before a setMode
 
-	uint8_t _dmatxchn=-1;
-	uint8_t _dmarxchn=-1;
+	int _dmatxchn=-1;
+	int _dmarxchn=-1;
 	uint8_t txonly=0;
 
 	void	doDspiInterrupt();
@@ -208,7 +208,7 @@ void		clearTxInterrupt();
 void		clearRxInterrupt();
 #if defined(__PIC32MZXX__)
 bool		beginasync();
-bool 		beginasync(uint8_t pin, uint8_t dma_rx=-1, uint8_t dma_tx = -1);
+bool 		beginasync(uint8_t pin, int dma_rx=-1, int dma_tx = -1);
 bool		asyncTransfer(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv);
 bool		asyncTransfer(uint8_t pbSnd);
 bool		asyncTransfer(uint16_t cbReq, uint8_t bPadT, uint8_t * pbRcv);
