@@ -14,7 +14,7 @@
         "category": "pic32",
         "url": "https://github.com/mhmtsui/chipKIT-core/releases/download/v2.1.0-beta5/2.1.0-beta5.zip",
         "archiveFileName": "2.1.0-beta5.zip",
-        "checksum": "SHA256:8DE0D3ED5FB307482F20FE697340BC0EA917E1A7E80170913878F27260F65313",
+        "checksum": "SHA-256:8DE0D3ED5FB307482F20FE697340BC0EA917E1A7E80170913878F27260F65313",
         "size": "7989124",
         "help": {
           "online": "http://chipkit.net/started/learn-basics/"
