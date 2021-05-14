@@ -1065,18 +1065,22 @@ void DMAC_ChannelDisable (DMAC_CHANNEL channel)
     {
         /* Disable channel in register DCHxCON */
         /* CHEN = 0 */
-        regs = (volatile uint32_t *)(_DMAC_BASE_ADDRESS + 0x60 + (channel * 0xC0) + 0x0);
-        *(volatile uint32_t *)(regs) = _DCH0CON_CHEN_MASK;
+        // regs = (volatile uint32_t *)(_DMAC_BASE_ADDRESS + 0x60 + (channel * 0xC0) + 0x0);
+        // *(volatile uint32_t *)(regs) = _DCH0CON_CHEN_MASK;
 
-        if (!(gDMAChannelObj[channel].interrupt)){
-          regs = (volatile uint32_t *)(_DMAC_BASE_ADDRESS + 0x60 + (channel * 0xC0) + 0x20);
-          if ((*(volatile uint32_t *) (regs))&(_DCH0INT_CHBCIF_MASK)){
-            (*(volatile uint32_t *) (regs)) &= (~(_DCH0INT_CHBCIF_MASK));
-          }
-            gDMAChannelObj[channel].inUse = false;
-        }else{
-          gDMAChannelObj[channel].inUse = false;
-        }
+        // if (!(gDMAChannelObj[channel].interrupt)){
+        //   regs = (volatile uint32_t *)(_DMAC_BASE_ADDRESS + 0x60 + (channel * 0xC0) + 0x20);
+        //   if ((*(volatile uint32_t *) (regs))&(_DCH0INT_CHBCIF_MASK)){
+        //     (*(volatile uint32_t *) (regs)) &= (~(_DCH0INT_CHBCIF_MASK));
+        //   }
+        //   gDMAChannelObj[channel].inUse = false;
+        // }else{
+        //   gDMAChannelObj[channel].inUse = false;
+        // }
+        //write abort bit
+        regs = (volatile uint32_t *)(_DMAC_BASE_ADDRESS + 0x60 + (channel * 0xC0) + 0x10)+2;
+        *(volatile uint32_t *)(regs) = _DCH0ECON_CABORT_MASK;
+        gDMAChannelObj[channel].inUse = false;
     }
 }
 
