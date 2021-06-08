@@ -1036,6 +1036,32 @@ hestia_V3.build.ldscript.path={build.variant.path}
 hestia_V3.usb.enabled=true
 hestia_V3.usb.default=z_custom
 
+# HE V3x
+
+hestia_V3x.name=Hestia V3x
+hestia_V3x.group=chipKIT
+
+# new items
+hestia_V3x.platform=pic32
+hestia_V3x.build.board=_BOARD_V3x_
+hestia_V3x.ldscript=MZ-application-32MZ2048ECX.ld
+# end of new items
+
+hestia_V3x.upload.protocol=stk500v2
+hestia_V3x.upload.maximum_size=2080768
+hestia_V3x.upload.maximum_data_size=524288
+hestia_V3x.upload.speed=115200
+hestia_V3x.upload.tool=pic32prog
+
+hestia_V3x.build.mcu=32MZ2048EFH144
+hestia_V3x.build.f_cpu=252000000UL
+hestia_V3x.build.core=pic32
+hestia_V3x.ldcommon=chipKIT-application-COMMON-MZ.ld
+hestia_V3x.build.variant=V3x
+hestia_V3x.build.ldscript.path={build.variant.path}
+
+hestia_V3x.usb.enabled=true
+hestia_V3x.usb.default=z_custom
 
 
 ck-pro-mz.name=chipKIT Pro MZ
@@ -1310,3 +1336,10 @@ hestia_V3.menu.USB.a_cdcacm=Serial
 hestia_V3.menu.USB.a_cdcacm.build.extra_flags=-D__USB_ENABLED__ -D__USB_CDCACM__ -D__SERIAL_IS_USB__
 hestia_V3.menu.USB.b_cdcacm_km=Serial, Keyboard & Mouse
 hestia_V3.menu.USB.b_cdcacm_km.build.extra_flags=-D__USB_ENABLED__ -D__USB_CDCACM_KM__ -D__SERIAL_IS_USB__
+
+hestia_V3x.menu.USB.z_custom=Custom / Disabled
+hestia_V3x.menu.USB.z_custom.build.extra_flags=
+hestia_V3x.menu.USB.a_cdcacm=Serial
+hestia_V3x.menu.USB.a_cdcacm.build.extra_flags=-D__USB_ENABLED__ -D__USB_CDCACM__ -D__SERIAL_IS_USB__
+hestia_V3x.menu.USB.b_cdcacm_km=Serial, Keyboard & Mouse
+hestia_V3x.menu.USB.b_cdcacm_km.build.extra_flags=-D__USB_ENABLED__ -D__USB_CDCACM_KM__ -D__SERIAL_IS_USB__
