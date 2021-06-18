@@ -54,6 +54,8 @@
 #include "wiring_private.h"
 #include "plib_dmac.h"
 
+#if defined(__PIC32MZXX__)
+
 void DMA0_InterruptHandler( void );
 void DMA1_InterruptHandler( void );
 void DMA2_InterruptHandler( void );
@@ -1695,3 +1697,5 @@ void DMA7_InterruptHandler (void)
 
 
 }
+
+#endif

@@ -47,6 +47,8 @@
 #ifndef PLIB_DMAC_H    // Guards against multiple inclusion
 #define PLIB_DMAC_H
 
+#if defined(__PIC32MZXX__)
+
 // *****************************************************************************
 // *****************************************************************************
 // Section: Included Files
@@ -347,5 +349,7 @@ void DMAC_Initialize(DMAC_CHANNEL chn, uint8_t vec, bool continuous, bool patter
 
 #endif
 // DOM-IGNORE-END
+
+#endif
 
 #endif //PLIB_DMAC_H

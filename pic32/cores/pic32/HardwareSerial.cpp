@@ -87,10 +87,10 @@
 #include "pins_arduino.h"
 #include "plib_dmac.h"
 #include "HardwareSerial.h"
-
+#if defined(__PIC32MZXX__)
 static void TransmitCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle);
 static void ReceiveCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle);
-
+#endif
 
 extern "C"
 {
@@ -149,7 +149,11 @@ void __USER_ISR IntAsyncSer7Handler(void);
 #if defined(__PIC32_PPS__)
 HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, int splT, isrFunc isrHandler, isrFunc israsyncHandler, int pinT, int pinR, ppsFunctionType ppsT, ppsFunctionType ppsR)
 #else
-HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, int splT, isrFunc isrHandler, isrFunc israsyncHandler)
+HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, int splT, isrFunc isrHandler
+#if defined(__PIC32MZXX__)
+, isrFunc israsyncHandler
+#endif
+)
 #endif
 {
 	uart = uartT;
@@ -160,7 +164,9 @@ HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, i
 	ipl  = (uint8_t)iplT;
 	spl  = (uint8_t)splT;
     isr  = isrHandler;
+#if defined(__PIC32MZXX__)    
     aisr = israsyncHandler;
+#endif
     rxIntr = NULL;
     txIntr = NULL;
 
@@ -726,7 +732,7 @@ size_t HardwareSerial::write(const char *str) {
     if (str == NULL) return 0;
     return write((const uint8_t *)str, strlen(str));
 }
-
+#if defined(__PIC32MZXX__)
 bool HardwareSerial::write_async(uint8_t * buffer, size_t size){
     if (_dmatxchn != -1){
         DMAC_ChannelDisable((DMAC_CHANNEL)_dmatxchn);
@@ -747,7 +753,7 @@ bool HardwareSerial::read_async(uint8_t * buffer, size_t size){
     }
     return false;
 }
-
+#endif
 // Hardware serial has a buffer of length 1
 int HardwareSerial::availableForWrite() {
     if (uart->uxSta.reg & (1 << _UARTSTA_UTXBF)) {
@@ -762,7 +768,7 @@ int HardwareSerial::availableForWrite() {
 HardwareSerial::operator int() {
     return 1;
 }
-
+#if defined(__PIC32MZXX__)
 static void ReceiveCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contextHandle){
     HardwareSerial * h = (HardwareSerial *) contextHandle;
     h->clearrxInterruptflag();
@@ -779,7 +785,7 @@ static void TransmitCompleteCallback(DMAC_TRANSFER_EVENT event, uintptr_t contex
         h->asynctxIntr();
     }
 }
-
+#endif
 /* ------------------------------------------------------------ */
 /***	HardwareSerial::doSerialInt
 **
@@ -856,6 +862,7 @@ void HardwareSerial::doSerialInt(void)
 
 }
 
+#if defined(__PIC32MZXX__)
 void HardwareSerial::doAsyncSerialInt(void)
 {
 	//int		bufIndex;
@@ -921,6 +928,7 @@ void HardwareSerial::attachasyncrxInterrupt(void (*callback)(void)) {
 void HardwareSerial::attachasynctxInterrupt(void (*callback)(void)) {
     asynctxIntr = callback;
 }
+#endif
 
 void HardwareSerial::attachtxInterrupt(void (*callback)(void)) {
     txIntr = callback;
@@ -982,7 +990,7 @@ void __USER_ISR IntSer0Handler(void)
 	Serial.doSerialInt();
 #endif
 }
-
+#if defined(__PIC32MZXX__)
 void __USER_ISR IntAsyncSer0Handler(void)
 {
 #if defined(__SERIAL_IS_USB__)
@@ -991,6 +999,7 @@ void __USER_ISR IntAsyncSer0Handler(void)
     Serial.doAsyncSerialInt();
 #endif
 }
+#endif
 #endif
 
 /* ------------------------------------------------------------ */
@@ -1014,10 +1023,12 @@ void __USER_ISR IntSer1Handler(void)
 {
 	Serial1.doSerialInt();
 }
+#if defined(__PIC32MZXX__)
 void __USER_ISR IntAsyncSer1Handler(void)
 {
 	Serial1.doAsyncSerialInt();
 }
+#endif
 #endif
 
 /* ------------------------------------------------------------ */
@@ -1041,11 +1052,12 @@ void __USER_ISR IntSer2Handler(void)
 {
 	Serial2.doSerialInt();
 }
-
+#if defined(__PIC32MZXX__)
 void __USER_ISR IntAsyncSer2Handler(void)
 {
 	Serial2.doAsyncSerialInt();
 }
+#endif
 #endif
 
 /* ------------------------------------------------------------ */
@@ -1069,11 +1081,12 @@ void __USER_ISR IntSer3Handler(void)
 {
 	Serial3.doSerialInt();
 }
-
+#if defined(__PIC32MZXX__)
 void __USER_ISR IntAsyncSer3Handler(void)
 {
 	Serial3.doAsyncSerialInt();
 }
+#endif
 #endif
 
 /* ------------------------------------------------------------ */
@@ -1097,11 +1110,12 @@ void __USER_ISR IntSer4Handler(void)
 {
 	Serial4.doSerialInt();
 }
-
+#if defined(__PIC32MZXX__)
 void __USER_ISR IntAsyncSer4Handler(void)
 {
 	Serial4.doAsyncSerialInt();
 }
+#endif
 #endif
 
 /* ------------------------------------------------------------ */
@@ -1125,10 +1139,12 @@ void __USER_ISR IntSer5Handler(void)
 {
 	Serial5.doSerialInt();
 }
+#if defined(__PIC32MZXX__)
 void __USER_ISR IntAsyncSer5Handler(void)
 {
 	Serial5.doAsyncSerialInt();
 }
+#endif
 #endif
 
 /* ------------------------------------------------------------ */
@@ -1152,11 +1168,12 @@ void __USER_ISR IntSer6Handler(void)
 {
 	Serial6.doSerialInt();
 }
-
+#if defined(__PIC32MZXX__)
 void __USER_ISR IntAsyncSer6Handler(void)
 {
 	Serial6.doAsyncSerialInt();
 }
+#endif
 #endif
 
 /* ------------------------------------------------------------ */
@@ -1180,11 +1197,12 @@ void __USER_ISR IntSer7Handler(void)
 {
 	Serial7.doSerialInt();
 }
-
+#if defined(__PIC32MZXX__)
 void __USER_ISR IntAsyncSer7Handler(void)
 {
 	Serial7.doAsyncSerialInt();
 }
+#endif
 #endif
 
 };	// extern C
@@ -1204,7 +1222,11 @@ bool Serial0_available() { return Serial0.available(); }
 #if defined(__PIC32_PPS__)
 HardwareSerial Serial0((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, IntSer0Handler, IntAsyncSer0Handler, _SER0_TX_PIN, _SER0_RX_PIN, _SER0_TX_OUT, _SER0_RX_IN);
 #else
-HardwareSerial Serial0((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, IntSer0Handler, IntAsyncSer0Handler);
+HardwareSerial Serial0((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, IntSer0Handler
+#if defined(__PIC32MZXX__)
+, IntAsyncSer0Handler
+#endif
+);
 #endif
 #endif
 
@@ -1220,7 +1242,7 @@ bool Serial_available() { return Serial.available(); }
 #if defined(__PIC32_PPS__)
 HardwareSerial Serial((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, IntSer0Handler, IntAsyncSer0Handler, _SER0_TX_PIN, _SER0_RX_PIN, _SER0_TX_OUT, _SER0_RX_IN);
 #else
-HardwareSerial Serial((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, IntSer0Handler, IntAsyncSer0Handler);
+HardwareSerial Serial((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, IntSer0Handler);
 #endif
 #endif
 
@@ -1231,7 +1253,7 @@ bool Serial1_available() { return Serial1.available(); }
 #if defined(__PIC32_PPS__)
 HardwareSerial Serial1((p32_uart *)_SER1_BASE, _SER1_IRQ, _SER1_VECTOR, _SER1_IPL, _SER1_SPL, IntSer1Handler, IntAsyncSer1Handler, _SER1_TX_PIN, _SER1_RX_PIN, _SER1_TX_OUT, _SER1_RX_IN);
 #else
-HardwareSerial Serial1((p32_uart *)_SER1_BASE, _SER1_IRQ, _SER1_VECTOR, _SER1_IPL, _SER1_SPL, IntSer1Handler, IntAsyncSer1Handler);
+HardwareSerial Serial1((p32_uart *)_SER1_BASE, _SER1_IRQ, _SER1_VECTOR, _SER1_IPL, _SER1_SPL, IntSer1Handler);
 #endif
 #endif
 
@@ -1240,7 +1262,7 @@ bool Serial2_available() { return Serial2.available(); }
 #if defined(__PIC32MZXX__)
 HardwareSerial Serial2((p32_uart *)_SER2_BASE, _SER2_IRQ, _SER2_VECTOR, _SER2_IPL, _SER2_SPL, IntSer2Handler, IntAsyncSer2Handler,_SER2_TX_PIN, _SER2_RX_PIN, _SER2_TX_OUT, _SER2_RX_IN);
 #else
-HardwareSerial Serial2((p32_uart *)_SER2_BASE, _SER2_IRQ, _SER2_VECTOR, _SER2_IPL, _SER2_SPL, IntSer2Handler, IntAsyncSer2Handler);
+HardwareSerial Serial2((p32_uart *)_SER2_BASE, _SER2_IRQ, _SER2_VECTOR, _SER2_IPL, _SER2_SPL, IntSer2Handler);
 #endif
 #endif
 
@@ -1249,7 +1271,7 @@ bool Serial3_available() { return Serial3.available(); }
 #if defined(__PIC32MZXX__)
 HardwareSerial Serial3((p32_uart *)_SER3_BASE, _SER3_IRQ, _SER3_VECTOR, _SER3_IPL, _SER3_SPL, IntSer3Handler, IntAsyncSer3Handler, _SER3_TX_PIN, _SER3_RX_PIN, _SER3_TX_OUT, _SER3_RX_IN);
 #else
-HardwareSerial Serial3((p32_uart *)_SER3_BASE, _SER3_IRQ, _SER3_VECTOR, _SER3_IPL, _SER3_SPL, IntSer3Handler, IntAsyncSer3Handler);
+HardwareSerial Serial3((p32_uart *)_SER3_BASE, _SER3_IRQ, _SER3_VECTOR, _SER3_IPL, _SER3_SPL, IntSer3Handler);
 #endif
 #endif
 
@@ -1258,7 +1280,7 @@ bool Serial4_available() { return Serial4.available(); }
 #if defined(__PIC32MZXX__)
 HardwareSerial Serial4((p32_uart *)_SER4_BASE, _SER4_IRQ, _SER4_VECTOR, _SER4_IPL, _SER4_SPL, IntSer4Handler, IntAsyncSer4Handler, _SER4_TX_PIN, _SER4_RX_PIN, _SER4_TX_OUT, _SER4_RX_IN);
 #else
-HardwareSerial Serial4((p32_uart *)_SER4_BASE, _SER4_IRQ, _SER4_VECTOR, _SER4_IPL, _SER4_SPL, IntSer4Handler, IntAsyncSer4Handler);
+HardwareSerial Serial4((p32_uart *)_SER4_BASE, _SER4_IRQ, _SER4_VECTOR, _SER4_IPL, _SER4_SPL, IntSer4Handler);
 #endif
 #endif
 
@@ -1267,7 +1289,7 @@ bool Serial5_available() { return Serial5.available(); }
 #if defined(__PIC32MZXX__)
 HardwareSerial Serial5((p32_uart *)_SER5_BASE, _SER5_IRQ, _SER5_VECTOR, _SER5_IPL, _SER5_SPL, IntSer5Handler, IntAsyncSer5Handler, _SER5_TX_PIN, _SER5_RX_PIN, _SER5_TX_OUT, _SER5_RX_IN);
 #else
-HardwareSerial Serial5((p32_uart *)_SER5_BASE, _SER5_IRQ, _SER5_VECTOR, _SER5_IPL, _SER5_SPL, IntSer5Handler, IntAsyncSer5Handler);
+HardwareSerial Serial5((p32_uart *)_SER5_BASE, _SER5_IRQ, _SER5_VECTOR, _SER5_IPL, _SER5_SPL, IntSer5Handler);
 #endif
 #endif
 
@@ -1276,7 +1298,7 @@ bool Serial6_available() { return Serial6.available(); }
 #if defined(__PIC32MZXX__)
 HardwareSerial Serial6((p32_uart *)_SER6_BASE, _SER6_IRQ, _SER6_VECTOR, _SER6_IPL, _SER6_SPL, IntSer6Handler, IntAsyncSer6Handler, _SER6_TX_PIN, _SER6_RX_PIN, _SER6_TX_OUT, _SER6_RX_IN);
 #else
-HardwareSerial Serial6((p32_uart *)_SER6_BASE, _SER6_IRQ, _SER6_VECTOR, _SER6_IPL, _SER6_SPL, IntSer6Handler, IntAsyncSer6Handler);
+HardwareSerial Serial6((p32_uart *)_SER6_BASE, _SER6_IRQ, _SER6_VECTOR, _SER6_IPL, _SER6_SPL, IntSer6Handler);
 #endif
 #endif
 
@@ -1285,7 +1307,7 @@ bool Serial7_available() { return Serial7.available(); }
 #if defined(__PIC32MZXX__)
 HardwareSerial Serial7((p32_uart *)_SER7_BASE, _SER7_IRQ, _SER7_VECTOR, _SER7_IPL, _SER7_SPL, IntSer7Handler, IntAsyncSer7Handler, _SER7_TX_PIN, _SER7_RX_PIN, _SER7_TX_OUT, _SER7_RX_IN);
 #else
-HardwareSerial Serial7((p32_uart *)_SER7_BASE, _SER7_IRQ, _SER7_VECTOR, _SER7_IPL, _SER7_SPL, IntSer7Handler, IntAsyncSer7Handler);
+HardwareSerial Serial7((p32_uart *)_SER7_BASE, _SER7_IRQ, _SER7_VECTOR, _SER7_IPL, _SER7_SPL, IntSer7Handler);
 #endif
 #endif
 

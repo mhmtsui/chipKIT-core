@@ -117,17 +117,18 @@ class HardwareSerial : public Stream
 #if defined(__PIC32_PPS__)
 		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl, isrFunc isrHandler, isrFunc israsyncHandler, int pinT, int pinR, ppsFunctionType ppsT, ppsFunctionType ppsR);
 #else
-		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl, isrFunc isrHandler, isrFunc israsyncHandler);
+		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl, isrFunc isrHandler 
+        #if defined(__PIC32MZXX__) 
+                , isrFunc israsyncHandler
+        #endif
+                );
 #endif
 
 		void			doSerialInt(void);
-                void                    doAsyncSerialInt(void);
+
         void            attachtxInterrupt(void (*callback)(void));
         void            attachInterrupt(void (*callback)(int));
-        void            attachasynctxInterrupt(void (*callback)(void));
-        void            attachasyncrxInterrupt(void (*callback)(void));
-        void            (*asynctxIntr)(void);
-        void            (*asyncrxIntr)(void);
+
         void            cleartxInterruptflag(void){ ifs->clr = bit_tx;}
         void            clearrxInterruptflag(void){ ifs->clr = bit_rx;}
         void            detachInterrupt();
@@ -137,22 +138,26 @@ class HardwareSerial : public Stream
 
 		void			begin(unsigned long baudRate);
         void            begin(unsigned long baudRate, uint8_t address);
-//#if defined(__PIC32MZXX__)
+#if defined(__PIC32MZXX__)
         void            beginasync(unsigned long baudRate=0, int dmarxchn=-1, int dmatxchn=-1, bool rx_continuous=false, bool rx_pattern_match = false,
                                    uint16_t rxpattern=0, bool tx_continuous=false, bool tx_pattern_match=false, uint16_t txpattern=0);
-// #else
-//         void            beginasync(unsigned long baudRate=0, int dmarxchn=-1, int dmatxchn=-1, bool rx_continuous=false, bool rx_pattern_match=false,
-//                                    uint8_t rxpattern=0, bool tx_continuous=false, bool tx_pattern_match=false, uint8_t txpattern=0);
-// #endif
+        virtual bool    write_async(uint8_t * buffer, size_t size);
+        virtual bool    read_async(uint8_t * buffer, size_t size);
+        void            attachasynctxInterrupt(void (*callback)(void));
+        void            attachasyncrxInterrupt(void (*callback)(void));
+        void            (*asynctxIntr)(void);
+        void            (*asyncrxIntr)(void);
+        void                    doAsyncSerialInt(void);
+#endif
 		void			end();
 		virtual int		available(void);
         virtual int     availableForWrite();
 		virtual int		peek();
 		virtual int		read(void);
-		virtual bool    read_async(uint8_t * buffer, size_t size);
+		
                 virtual void	flush(void);
 		virtual void	purge(void);
-                virtual bool    write_async(uint8_t * buffer, size_t size);
+                
 		virtual	size_t	write(uint8_t);
                 virtual size_t  write(const char *str);
                 virtual size_t  write(const uint8_t *buffer, size_t size);
