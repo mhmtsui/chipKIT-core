@@ -541,9 +541,24 @@ extern int convertADC(uint8_t channelNumber);
 
 #define	PIN_HEATER_EN   67 // RA4
 
+#define PIN_PCA9546A_RST 81
+
 //#define PIN_TM1640_DISP 73 //RC15
 #define PIN_TM1640_SCL  83 //RA14
 #define PIN_TM1640_SDA  82 //RA15
+
+#define PIN_Y0_Y1_OE    77
+#define PIN_Y2_Y3_OE    78
+
+#define PIN_SERIAL1_DE      66
+#define PIN_SERIAL4_DE      70
+#define PIN_SERIAL5_DE      73
+#define PIN_SERIAL2_DE      76
+
+#define PIN_HX711_SCK1      84
+#define PIN_HX711_DIN1      85
+#define PIN_HX711_SCK2      86
+#define PIN_HX711_DIN2      87
 
 #endif	// BOARD_DEFS_H
 
