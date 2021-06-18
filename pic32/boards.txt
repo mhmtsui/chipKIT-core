@@ -1048,7 +1048,7 @@ hestia_V3x.ldscript=MZ-application-32MZ2048ECX.ld
 # end of new items
 
 hestia_V3x.upload.protocol=stk500v2
-hestia_V3x.upload.maximum_size=2080768
+hestia_V3x.upload.maximum_size=1026048
 hestia_V3x.upload.maximum_data_size=524288
 hestia_V3x.upload.speed=115200
 hestia_V3x.upload.tool=pic32prog
